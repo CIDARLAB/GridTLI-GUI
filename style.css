@@ -32,19 +32,21 @@ canvas {
     margin: -925px 0 0 -750px;
 }
 
-#gridlayer {
-    margin: 50px 20px 0 0;
+#myCanvas {
+    width: 710px;
+    height: 510px;
+    margin: 50px 0px 0 -50px;
 }
 
-#axislayer {
+/*#axislayer {
     width: 710px;
     height: 510px;
     margin: -460px 0 0 -50px;
-}
+}*/
 
-#canvas {
+/*#canvas {
     margin: -500px 20px 0 0;
-}
+}*/
 
 #tab #threshold {
     float: left;

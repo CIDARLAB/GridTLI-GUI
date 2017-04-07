@@ -9,124 +9,109 @@
     <link rel="stylesheet" href="style.css"></link>
 	<!-- load paper.js and canvas -->
     <script type="text/javascript" src="paper-full.js"></script>
-    <script type="text/paperscript" canvas="canvas">
-		// Define background color for the canvas
-		canvas.style.background = 'transparent';
-		var path;
-		var allPathsList = [];
-		var pointList = [];
-		var textItem = new PointText({
-			content: 'Click and drag to draw a line.',
-			point: new Point(20, 30),
-			fillColor: 'black',
-		});
-
-		function onMouseDown(event) {
-			// If we produced a path before, deselect it:
-			if (path) {
-				path.selected = false;
-			}
-			// Create a new path and set its stroke color to black:
-			path = new Path({
-				segments: [event.point],
-				strokeColor: 'black',
-				// Select the path, so we can see its segment points:
-				fullySelected: true
+	<script type="text/javascript">
+		// Make the paper scope global, by injecting it into window:
+		paper.install(window);
+		var tool1, tool2;
+		var timeValues = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
+		var spatialValues = [-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6];
+		spatialValues.reverse()
+		var spatialDivs = 12;
+		var timeDivs = 16;
+		window.onload = function() {
+			// Setup directly from canvas id:
+			paper.setup('myCanvas');
+			myCanvas.style.background = '#ccc'; 
+		
+			var path;
+			var checkX;
+			var count = 0;
+			var allPathsList = [];
+			var pointList = [];
+			var textItem = new PointText({
+				content: 'Click and drag to draw a line.',
+				point: new Point(60, 30),
+				fillColor: 'black',
 			});
-		}
 
-		// While the user drags the mouse, points are added to the path
-		// at the position of the mouse:
-		function onMouseDrag(event) {
-			path.add(event.point);
-			// Update the content of the text item to show how many
-			// segments it has:
-			textItem.content = 'Segment count: ' + path.segments.length + "\n";
-			// adds the x and y coords of each point to the list for the current path
-			pointList.push(event.point["x"], event.point["y"]);
-			textItem.content = 'Point Coords: ' + pointList + "\n";
-		}
+			grid = new Layer();
+			drawGrid(timeDivs, spatialDivs, timeValues, spatialValues, paper.view.bounds);
+			view.draw()
 
-		// When the mouse is released:
-		function onMouseUp(event) {
-			var segmentCount = path.segments.length;
-			textItem.content = segmentCount;
-			// add the list of points for the segment to the list of all paths
-			allPathsList.push(pointList);
-			// reinitilizae the pointList
-			pointList = [];
-			// for testing purposes, display all paths and latest path
-			numPaths = allPathsList.length;
-			textItem.content = allPathsList + "\n" + allPathsList[numPaths-1] + "\n";
-		}
+			
 
+			cnvs = new Layer({
+				children: path, allPathsList, pointList, textItem, checkX, count,	
+			});
+
+		
+
+			tool1 = new Tool();
+			tool1.onMouseDown = function(event) {
+				if ((50 <= event.point["x"]) && (event.point["x"] <= 700) && (10 <= event.point["y"]) && (event.point["y"] <= 460)) {
+					// If we produced a path before, deselect it:
+					if (path) {
+						path.selected = false;
+					}
+					// Create a new path and set its stroke color to black:
+					path = new Path({
+						segments: [event.point],
+						strokeColor: 'black',
+						// Select the path, so we can see its segment points:
+						fullySelected: true
+					});
+				}
+			}
+
+			// While the user drags the mouse, points are added to the path
+			// at the position of the mouse:
+			tool1.onMouseDrag= function(event) {
+				document.getElementById('xrange').value = path.segments.length;
+				if ((50 <= event.point["x"]) && (event.point["x"] <= 700) && (10 <= event.point["y"]) && (event.point["y"] <= 460)) {
+					if(count>0) {
+						if(checkX.x < event.point.x) {
+							path.add(event.point);
+							checkX=event.point;
+						}
+						} else {
+							path.add(event.point);
+							checkX = event.point;
+						}
+
+					count++;
+					
+					pointList.push(event.point["x"], event.point["y"]);
+					textItem.content = 'Point Coords: ' + '[' + event.point["x"] + ', ' + event.point["y"] + '], ' + "\n";
+
+					
+					// path.add(event.point);
+					// Update the content of the text item to show how many
+					// segments it has:
+					// textItem.content = 'Segment count: ' + path.segments.length + "\n";
+					// adds the x and y coords of each point to the list for the current path
+					
+				}
+			}
+
+			// When the mouse is released:
+			tool1.onMouseUp = function(event) {
+				if ((50 <= event.point["x"]) && (event.point["x"] <= 700) && (10 <= event.point["y"]) && (event.point["y"] <= 460)) {
+					count = 0;
+					var segmentCount = path.segments.length;
+					textItem.content = segmentCount;
+					// add the list of points for the segment to the list of all paths
+					allPathsList.push(pointList);
+					// reinitilizae the pointList
+					pointList = [];
+					// for testing purposes, display all paths and latest path
+					numPaths = allPathsList.length;
+					textItem.content = allPathsList + "\n" + allPathsList[numPaths-1] + "\n";
+				}
+			}
+			view.draw();
+			window.drawGrid = drawGrid();
+		}
     </script>
-	<script type="text/paperscript" canvas="gridlayer">
-		gridlayer.style.background = '#ccc';
-		var drawGridLines = function(num_rectangles_wide, num_rectangles_tall, boundingRect) {
-			var width_per_rectangle = boundingRect.width / num_rectangles_wide;
-			var height_per_rectangle = boundingRect.height / num_rectangles_tall;
-			for (var i = 0; i <= num_rectangles_wide; i++) {
-				var xPos = boundingRect.left + i * width_per_rectangle;
-				var topPoint = new paper.Point(xPos, boundingRect.top);
-				var bottomPoint = new paper.Point(xPos, boundingRect.bottom);
-				var aLine = new paper.Path.Line(topPoint, bottomPoint);
-				aLine.strokeColor = '#999';
-			}
-
-			for (var i = 0; i <= num_rectangles_tall; i++) {
-				var yPos = boundingRect.top + i * height_per_rectangle;
-				var leftPoint = new paper.Point(boundingRect.left, yPos);
-				var rightPoint = new paper.Point(boundingRect.right, yPos);
-				var aLine = new paper.Path.Line(leftPoint, rightPoint);
-				aLine.strokeColor = '#999';
-			}
-		}
-		drawGridLines(16, 12, paper.view.bounds);
-	</script>
-	<script type="text/paperscript" canvas="axislayer">
-		axislayer.style.background = 'transparent';
-
-		var xAxisValues = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
-		var yAxisValues = [6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6];
-		var drawAxes = function(num_rectangles_wide, num_rectangles_tall, boundingRect) {
-
-			var xlabel = new PointText(new Point(((boundingRect.right - 60) / 2), boundingRect.bottom - 3));
-			xlabel.content = "X Label";
-
-			var width_per_rectangle = (boundingRect.width - 60) / num_rectangles_wide;
-			var height_per_rectangle = (boundingRect.height - 60) / num_rectangles_tall;
-			for (var i = 0; i <= num_rectangles_wide; i++) {
-				var xPos = 50 + i * width_per_rectangle;
-				var xPos2 = boundingRect.bottom - 55;
-				var topPoint = new paper.Point(xPos, xPos2);
-				var bottomPoint = new paper.Point(xPos, boundingRect.bottom - 45);
-				var aLine = new paper.Path.Line(topPoint, bottomPoint);
-				aLine.strokeColor = '#000';
-				var xticks = new PointText(new Point(xPos - 5, boundingRect.bottom - 30));
-				xticks.content = xAxisValues[i];
-			}
-
-			for (var i = 0; i <= num_rectangles_tall; i++) {
-				var yPos = boundingRect.top + 10 + i * height_per_rectangle;
-				var yPos2 = 45 + 10;
-				var leftPoint = new paper.Point(45, yPos);
-				var rightPoint = new paper.Point(yPos2, yPos);
-				var aLine = new paper.Path.Line(leftPoint, rightPoint);
-				aLine.strokeColor = '#000';
-				var yticks = new PointText(new Point(boundingRect.left + 25, yPos + 5));
-				yticks.content = yAxisValues[i];
-			}
-			var bottomLeftPoint = new paper.Point(50 ,boundingRect.bottom - 50);
-			var topLeftPoint = new paper.Point(50, 10);
-			var bottomRightPoint = new paper.Point(boundingRect.right - 10,boundingRect.bottom - 50);
-			var aLine = new paper.Path.Line(bottomLeftPoint, bottomRightPoint)
-			aLine.strokeColor = '#000';
-			var aLine = new paper.Path.Line(bottomLeftPoint, topLeftPoint)
-			aLine.strokeColor = '#000';
-		}
-		drawAxes(16, 12, paper.view.bounds);
-	</script>
 </head>
 <body>
 	<div class="navbar">
@@ -135,9 +120,7 @@
 	</div>
 	<div id="tab">
 		<article id="drawingGrid">
-			<canvas id="gridlayer"></canvas>
-			<canvas id="axislayer"></canvas>
-			<canvas id="canvas"></canvas>
+			<canvas id="myCanvas"></canvas>
 			<p class="rotate" id="label">Y Label</p>
 		</article>
 		<div id="threshold">
@@ -147,11 +130,11 @@
 					<p>Spatial:</p>
 				</article>
 				<article class="graphValues">
-					<input type="text" id="xmin" value="X_min"
+					<input type="text" id="smin" value="X_min"
 						onblur="if (this.value == '') {this.value = 'X_min';}"
 						onfocus="if (this.value == 'X_min') {this.value = '';}" />
 					<br>
-					<input type="text" id="xmax" value="X_max"
+					<input type="text" id="smax" value="X_max"
 						onblur="if (this.value == '') {this.value = 'X_max';}"
 						onfocus="if (this.value == 'X_max') {this.value = '';}" />
 				</article>
@@ -161,7 +144,7 @@
 					<p>Temporal:</p>
 				</article>
 				<article class="graphValues">
-					<input type="text" id="ymax" value="Y_max"
+					<input type="text" id="tmax" value="Y_max"
 						onblur="if (this.value == '') {this.value = 'Y_max';}"
 						onfocus="if (this.value == 'Y_max') {this.value = '';}" />
 				</article>
@@ -172,7 +155,7 @@
 					<p>Spatial:</p>
 				</article>
 				<article class="threshValues">
-					<input type="text" id="x_divs" value="Xt"
+					<input type="text" id="sThresh" value="Xt"
 						onblur="if (this.value == '') {this.value = 'Xt';}"
 						onfocus="if (this.value == 'Xt') {this.value = '';}" />
 				</article>
@@ -182,7 +165,7 @@
 					<p>Temporal:</p>
 				</article>
 				<article class="threshValues">
-					<input type="text" id="y_divs" value="Yt"
+					<input type="text" id="tThresh" value="Yt"
 						onblur="if (this.value == '') {this.value = 'Yt';}"
 						onfocus="if (this.value == 'Yt') {this.value = '';}" />
 				</article>
@@ -197,15 +180,20 @@
 						onfocus="if (this.value == 'Ct') {this.value = '';}" />
 				</article>
 			</article>
-			<button type="submit" id="changeVals" onClick="changeValues()">Run</button>
+			<button type="button" id="changeVals" onClick="changeValues()">Run</button>
 		</div>
 	</div>
-	<!--this section helps me check the javascript function for "run" gathers the values-->
+	<!--this section helps me check the javascript function that "run" gathers the values-->
+	<br><br>
+	<br><br>
+	<br><br>
+	<br>
 	<input type="text" id="xtmin" value="1"><br>
 	<input type="text" id="xtmax" value="1"><br>
 	<input type="text" id="ytmax" value="1"><br>
 	<input type="text" id="ct" value="1"><br>
-	<input id="xrange" value="1" style="width: 200px"><br>
-	<input id="yrange" value="1" style="width: 200px">
+	<input id="xrange" value="1" style="width: 300px"><br>
+	<input id="yrange" value="1" style="width: 300px"><br>
+	<img src="pencil.png" id="pencil" onClick="tool1.activate()" width="20px" height="20px">
 </body>
 </html>
