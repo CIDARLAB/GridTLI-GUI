@@ -12,12 +12,16 @@
 	<script type="text/javascript">
 		// Make the paper scope global, by injecting it into window:
 		paper.install(window);
-		var tool1, tool2;
+		// Initialize List of tools
+		var drawLine, drawPoints;
+		// Initialize Graph values
 		var timeValues = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
 		var spatialValues = [-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6];
 		spatialValues.reverse()
 		var spatialDivs = 12;
 		var timeDivs = 16;
+
+		// Load the window
 		window.onload = function() {
 			// Setup directly from canvas id:
 			paper.setup('myCanvas');
@@ -44,10 +48,9 @@
 				children: path, allPathsList, pointList, textItem, checkX, count,	
 			});
 
-		
-
-			tool1 = new Tool();
-			tool1.onMouseDown = function(event) {
+			// Define tool to draw the whole line segment
+			drawLine = new Tool();
+			drawLine.onMouseDown = function(event) {
 				if ((50 <= event.point["x"]) && (event.point["x"] <= 700) && (10 <= event.point["y"]) && (event.point["y"] <= 460)) {
 					// If we produced a path before, deselect it:
 					if (path) {
@@ -65,7 +68,7 @@
 
 			// While the user drags the mouse, points are added to the path
 			// at the position of the mouse:
-			tool1.onMouseDrag= function(event) {
+			drawLine.onMouseDrag= function(event) {
 				document.getElementById('xrange').value = path.segments.length;
 				if ((50 <= event.point["x"]) && (event.point["x"] <= 700) && (10 <= event.point["y"]) && (event.point["y"] <= 460)) {
 					if(count>0) {
@@ -94,7 +97,63 @@
 			}
 
 			// When the mouse is released:
-			tool1.onMouseUp = function(event) {
+			drawLine.onMouseUp = function(event) {
+				if ((50 <= event.point["x"]) && (event.point["x"] <= 700) && (10 <= event.point["y"]) && (event.point["y"] <= 460)) {
+					count = 0;
+					var segmentCount = path.segments.length;
+					textItem.content = segmentCount;
+					// add the list of points for the segment to the list of all paths
+					allPathsList.push(pointList);
+					// reinitilizae the pointList
+					pointList = [];
+					// for testing purposes, display all paths and latest path
+					numPaths = allPathsList.length;
+					textItem.content = allPathsList + "\n" + allPathsList[numPaths-1] + "\n";
+				}
+			}
+			// Define tool to draw points and connect them
+			drawPoints = new Tool();
+			drawPoints.onMouseDown = function(event) {
+				if ((50 <= event.point["x"]) && (event.point["x"] <= 700) && (10 <= event.point["y"]) && (event.point["y"] <= 460)) {
+					// If we produced a path before, deselect it:
+					if (path) {
+						path.selected = false;
+					}
+					// Create a new path and set its stroke color to black:
+					path = new Path({
+						segments: [event.point],
+						strokeColor: 'red',
+						// Select the path, so we can see its segment points:
+						fullySelected: true
+					});
+				}
+			}
+
+			// While the user drags the mouse, points are added to the path
+			// at the position of the mouse:
+			drawPoints.onMouseDrag= function(event) {
+				document.getElementById('xrange').value = path.segments.length;
+				if ((50 <= event.point["x"]) && (event.point["x"] <= 700) && (10 <= event.point["y"]) && (event.point["y"] <= 460)) {
+					if(count>0) {
+						if(checkX.x < event.point.x) {
+							path.add(event.point);
+							checkX=event.point;
+						}
+						} else {
+							path.add(event.point);
+							checkX = event.point;
+						}
+
+					count++;
+					
+					pointList.push(event.point["x"], event.point["y"]);
+					textItem.content = 'Point Coords: ' + '[' + event.point["x"] + ', ' + event.point["y"] + '], ' + "\n";
+					
+				}
+			}
+
+			// When the mouse is released:
+			drawPoints.onMouseUp = function(event) {
 				if ((50 <= event.point["x"]) && (event.point["x"] <= 700) && (10 <= event.point["y"]) && (event.point["y"] <= 460)) {
 					count = 0;
 					var segmentCount = path.segments.length;
@@ -194,6 +253,7 @@
 	<input type="text" id="ct" value="1"><br>
 	<input id="xrange" value="1" style="width: 300px"><br>
 	<input id="yrange" value="1" style="width: 300px"><br>
-	<img src="pencil.png" id="pencil" onClick="tool1.activate()" width="20px" height="20px">
+	<img src="icon-pencil.png" id="pencil" onClick="drawLine.activate()" width="20px" height="20px" padding="5px">
+	<img src="icon-segment.png" id ="dot" onClick="drawPoints.activate()" width="20px" height="20px" padding="5px">
 </body>
 </html>
