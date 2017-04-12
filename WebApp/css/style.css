@@ -16,13 +16,11 @@ html, body {
 input 
 {
 	font-family: 'Open Sans', sans-serif;
-	font-size: 16px;
-	padding: 7px;
-	outline: 0;
-	border: 0;
-	width: 250px;
+	font-size: 12px;
+	text-align:center;
+	width: 80px;
 	background: #EBE8DE;
-	border-radius: 5px;
+	margin-top: 5px;
 }
 input[type=submit]
 {
@@ -183,8 +181,8 @@ header .search
 .header img 
 {
 	float: left;
-	width: 180px;
-	height: 100px;
+	width: 300px;
+	height: 120px;
 	top: -5;
 	margin: 35px;
 }

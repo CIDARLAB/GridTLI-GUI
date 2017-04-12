@@ -29,6 +29,11 @@
 		var allPathsList = [];
 		var pointList = [];
 
+		var i = 0;
+		var colors=['red', 'blue', 'purple', 'black'];
+		var poinnt;
+		var count=0; 
+		
 		var textItem = new PointText({
 			content: 'Click and drag to draw a line.',
 			point: new Point(20, 30),
@@ -40,30 +45,50 @@
 			if (path) {
 				path.selected = false;
 			}
-
+			if (i<colors.length) {
+				colour=colors[i];
+			}
+			if (i > colors.length) {
+				i = 0;
+				colour= colors[i];
+			}
+			if (path) {
+				path.selected = false;
+			}
 			// Create a new path and set its stroke color to black:
 			path = new Path({
 				segments: [event.point],
-				strokeColor: 'black',
+				strokeColor: colour,
 				// Select the path, so we can see its segment points:
 				fullySelected: true
 			});
+			i = i + 1;
 		}
-
 		// While the user drags the mouse, points are added to the path
 		// at the position of the mouse:
 		function onMouseDrag(event) {
-			path.add(event.point);
+			if(count>0) {
+				if(poinnt.x<event.point.x){
+					path.add(event.point);
+					poinnt=event.point;
+				}
+			}else{
+				path.add(event.point);
+				poinnt=event.point;
+			}
+			count = count+1; 
 			// Update the content of the text item to show how many
 			// segments it has:
 			textItem.content = 'Segment count: ' + path.segments.length + "\n";
 			// adds the x and y coords of each point to the list for the current path
 			pointList.push(event.point["x"], event.point["y"]);
 			textItem.content = 'Point Coords: ' + pointList + "\n";
+			
 		}
 
 		// When the mouse is released:
 		function onMouseUp(event) {
+			count=0;
 			var segmentCount = path.segments.length;
 			textItem.content = segmentCount;
 
@@ -78,6 +103,7 @@
 			numPaths = allPathsList.length;
 			textItem.content = allPathsList + "\n" + allPathsList[numPaths-1] + "\n";
 		}
+
 
     </script>
 	<script type="text/paperscript" canvas="gridlayer">
@@ -245,6 +271,5 @@
 	<input type="text" id="ct" value="1"><br>
 	<input id="xrange" value="1" style="width: 200px"><br>
 	<input id="yrange" value="1" style="width: 200px"> -->
-</body>
 </body>
 </html>
