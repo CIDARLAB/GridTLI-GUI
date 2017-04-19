@@ -3,18 +3,23 @@ function round(value, decimals) {
 }
 
 function linspace(a,b,n) {
-    if(typeof n === "undefined") n = Math.max(Math.round(b-a)+1,1);
-    if(n<2) { return n===1?[a]:[]; }
+    if(typeof n === "undefined") {
+        n = Math.max(Math.round(b-a)+1,1);
+    }
+    if(n<2) {
+        return n===1?[a]:[];
+    }
     var i,ret = Array(n);
     n--;
-    for(i=n;i>=0;i--) { ret[i] = round((i*b+(n-i)*a)/n, 2); }
+    for(i = n;i >= 0;i--) {
+        ret[i] = round((i*b+(n-i)*a)/n, 2);
+    }
     return ret;
 }
 
 function changeValues(){
     // delete previous grid and reinitialize
-    grid.remove();
-    grid = new Layer();
+    grid.removeChildren();
 
     var spatialMin = document.getElementById('smin').value;
     var spatialMax = document.getElementById('smax').value;
@@ -32,8 +37,7 @@ function changeValues(){
 
     // draw the new grid
     drawGrid(timeDivs, spatialDivs, timeValues, spatialValues, view.bounds);
-    // reactivate the drawing canvas
-    // cnvs.activate();
+
     document.getElementById('xtmin').value = spatialMin;
     document.getElementById('xtmax').value = spatialMax;
     document.getElementById('ytmax').value = spatialDivs;
@@ -94,4 +98,61 @@ function drawGrid(nWide, nTall, xAxisVals, yAxisVals, cnvsSize) {
     var aLine = new paper.Path.Line(bottomLeftPoint, topLeftPoint)
     aLine.strokeColor = '#000';
 
+}
+
+// Colors boxes where there are lines
+function colorBoxes(nWide, nTall, cnvsSize, path, onOrOff) {
+    // change to the grid layer:
+    grid.activate();
+    // define the rectangle sizes from the grid
+    var rect_width = (cnvsSize.width - 60) / nWide;
+    var rect_height = (cnvsSize.height - 60) / nTall;
+    // define hit test parameters
+    var hitOptions = {
+        segments: false,
+        stroke: false,
+        fill: true,
+        tolerance: 1
+    };
+    // for testing purposes:
+    var txt = new PointText({point: new Point(60, 130)});
+    // for each point in the path, see what box its in:
+    if (path.segments.length > 1) { // protects against coloring a box due to a click
+        for (i=0; i < path.segments.length; i++) {
+            pt = [path.segments[i]["point"]["x"], path.segments[i]["point"]["y"]];
+            if (onOrOff == 'on') {
+                // if coloring the boxes:
+                for (var j = 0; j < nWide; j++) {
+                    for (var k = 0; k < nTall; k++) {
+                        var rect = new paper.Path.Rectangle({
+                            point: [j*rect_width + 50, k * rect_height + 10], 
+                            size: [rect_width, rect_height]
+                        });
+                        if (rect.bounds.contains(pt)) {
+                            rect.fillColor = '#50ffba';
+                            rect.sendToBack(); // ensures boxes are behind grid lines
+                        } else {
+                            rect.remove();
+                        }
+                    }
+                }
+            } else {
+                // delete the boxes via a hit test
+                var hitResult = project.activeLayer.hitTest(pt, hitOptions);
+                txt.content =  "pt: " + pt + "\nLayer: " + project.activeLayer + "\nhitResult: " +
+                    hitResult + "  hitResult.item: " + hitResult.item + "\nParent: " + 
+                    hitResult.item.parent + " parent of parent: " + hitResult.item.parent.parent;
+                if (!hitResult)
+                    continue;
+                if (hitResult) {
+                    // if (hitResult.type == 'fill') {
+                        var rect = hitResult.item;
+                        rect.remove();
+                    // }
+                }
+            }
+        }
+    }
+    // return to the canvas layer:
+    cnvs.activate();
 }

@@ -7,10 +7,10 @@ html, body {
     font-size: 12px;
 }
 
+/* CANVAS AREA */
 #tab {
     float: right;
     width: 950px;
-    /*max-width: 1000px;*/
     height: 580px;
     margin: 120px 50px 0px auto;
     background-color: #aaa;
@@ -19,34 +19,18 @@ html, body {
 
 #tab #drawingGrid {
     float: right;
-    /*margin-left: 50px;*/
 }
 
 canvas {
-    width: 650px;
-    height: 450px;
+    width: 710px;
+    height: 510px;
+    margin: 50px 0px 0 -50px;
     display: block;
 }
 
 #label {
     margin: -960px 0 0 -750px;
 }
-
-#myCanvas {
-    width: 710px;
-    height: 510px;
-    margin: 50px 0px 0 -50px;
-}
-
-/*#axislayer {
-    width: 710px;
-    height: 510px;
-    margin: -460px 0 0 -50px;
-}*/
-
-/*#canvas {
-    margin: -500px 20px 0 0;
-}*/
 
 #tab #threshold {
     float: left;
@@ -56,6 +40,7 @@ canvas {
     padding: 70px 0 45px 0;
 }
 
+/* CANVAS CONTROLS */
 .graphLabels {
     float: left;
     width: 100px;
@@ -116,11 +101,35 @@ button {
     margin: 0px 0 0 50px;
 }
 
+/* TOOL AREA */
+label > input{ /* hide radio buttons */
+  visibility: hidden; /* Makes input not-clickable */
+  position: absolute; /* Remove input from document flow */
+}
+
+label > input + img{ /* image style */
+  cursor:pointer;
+  border:2px outset;
+  background-color: #e6e6e6;
+}
+
+label > input:checked + img{ /* checked image style */
+  border:2px inset;
+  background-color: #c6c6c6;
+}
+
+img {
+    width: 15px;
+    height: 15px;
+    padding: 5px;
+}
+
+/* NAVIGATION BAR */
 .navbar {
     overflow: hidden;
     background-color: #333;
-    position: fixed; /* Set the navbar to fixed position */
-    top: 0; /* Position the navbar at the top of the page */
+    position: fixed; /* fixed position */
+    top: 0; /* Position at the top of page */
     width: 100%; /* Full width */
 }
 
