@@ -28,8 +28,8 @@ canvas {
     display: block;
 }
 
-#label {
-    margin: -960px 0 0 -750px;
+#axisLabel {
+    margin: -960px 0 0 -740px;
 }
 
 #tab #threshold {
@@ -102,6 +102,11 @@ button {
 }
 
 /* TOOL AREA */
+#tools {
+    margin-left: 350px;
+    display: block;
+}
+
 label > input{ /* hide radio buttons */
   visibility: hidden; /* Makes input not-clickable */
   position: absolute; /* Remove input from document flow */
@@ -125,24 +130,60 @@ img {
 }
 
 /* NAVIGATION BAR */
-.navbar {
+nav {
     overflow: hidden;
-    background-color: #333;
+    background-color: #19191f;
     position: fixed; /* fixed position */
     top: 0; /* Position at the top of page */
     width: 100%; /* Full width */
+    height: 120px;
+    text-align: center;
 }
 
-.navbar a {
+nav ul {
+    list-style: none;
+    display: inline-block;
+    margin: 82px 33% 0 33%;
+}
+
+nav ul li {
     float: left;
-    display: block;
-    color: #f2f2f2;
+    /*margin: 82px 50% 0 0;*/
+    padding: 0;
+}
+
+nav img {
+    float: left;
+    margin: 38px 0 23px 40px;
+    height: 59px;
+    width: 186px;
+}
+
+nav a {
+    color: white;
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
+
+/* SIDEBAR */
+/*.sidebar-left {
+    text-align: justify;
+    color: black;
+    padding: 5px;
+    text-decoration: none;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.sidebar-left > p {
+    padding: 10px;
+    width: 30%;
+    max-width: 400px;
+}*/
+
+/* GENERAL */
 .rotate {
     /* Safari */
     -webkit-transform: rotate(-90deg);

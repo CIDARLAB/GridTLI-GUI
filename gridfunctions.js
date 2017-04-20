@@ -36,39 +36,31 @@ function changeValues(){
     spatialValues.reverse() // grid writes top to bottom, therefore reverse the y-axis values
 
     // draw the new grid
-    drawGrid(timeDivs, spatialDivs, timeValues, spatialValues, view.bounds);
+    gridGroup = drawGrid(timeDivs, spatialDivs, timeValues, spatialValues, view.bounds);
 
-    document.getElementById('xtmin').value = spatialMin;
-    document.getElementById('xtmax').value = spatialMax;
-    document.getElementById('ytmax').value = spatialDivs;
-    document.getElementById('ct').value = timeDivs;
-    document.getElementById('xrange').value = spatialValues;
-    document.getElementById('yrange').value = timeValues;
+    // document.getElementById('xtmin').value = spatialMin;
+    // document.getElementById('xtmax').value = spatialMax;
+    // document.getElementById('ytmax').value = spatialDivs;
+    // document.getElementById('ct').value = timeDivs;
+    // document.getElementById('xrange').value = spatialValues;
+    // document.getElementById('yrange').value = timeValues;
+    return gridGroup;
 };
 
 function drawGrid(nWide, nTall, xAxisVals, yAxisVals, cnvsSize) {
-    var xlabel = new PointText(new Point(((cnvsSize.right - 60) / 2), cnvsSize.bottom - 3));
-    xlabel.content = "X Label";
+    // Define active layer:
+    grid.activate()
+
+    var xlabel = new PointText({
+        point: new Point(((cnvsSize.right - 60) / 2), cnvsSize.bottom - 3),
+        content: "X Label",
+        fillColor: 'black',
+    });
 
     var width_per_rect = (cnvsSize.width - 60) / nWide;
     var height_per_rect = (cnvsSize.height - 60) / nTall;
 
-    for (var i = 0; i <= nWide; i++) {
-        var xPos = 50 + i * width_per_rect;
-        var topPoint = new paper.Point(xPos, cnvsSize.top + 10);
-        var bottomPoint = new paper.Point(xPos, cnvsSize.bottom - 50);
-        var aLine = new paper.Path.Line(topPoint, bottomPoint);
-        aLine.strokeColor = '#999';
-    }
-
-    for (var i = 0; i <= nTall; i++) {
-        var yPos = cnvsSize.top + 10 + i * height_per_rect;
-        var leftPoint = new paper.Point(50, yPos);
-        var rightPoint = new paper.Point(cnvsSize.right - 10, yPos);
-        var aLine = new paper.Path.Line(leftPoint, rightPoint);
-        aLine.strokeColor = '#999';
-    }
-
+    // draw x-axis tick marks
     for (var i = 0; i <= nWide; i++) {
         var xPos = 50 + i * width_per_rect;
         var xPos2 = cnvsSize.bottom - 55;
@@ -80,6 +72,7 @@ function drawGrid(nWide, nTall, xAxisVals, yAxisVals, cnvsSize) {
         xticks.content = timeValues[i];
     }
 
+    // draw y-axis tick marks
     for (var i = 0; i <= nTall; i++) {
         var yPos = cnvsSize.top + 10 + i * height_per_rect;
         var yPos2 = 45 + 10;
@@ -90,6 +83,8 @@ function drawGrid(nWide, nTall, xAxisVals, yAxisVals, cnvsSize) {
         var yticks = new PointText(new Point(cnvsSize.left + 25, yPos + 5));
         yticks.content = spatialValues[i];
     }
+
+    // draw x and y axis lines
     var bottomLeftPoint = new paper.Point(50 ,cnvsSize.bottom - 50);
     var topLeftPoint = new paper.Point(50, 10);
     var bottomRightPoint = new paper.Point(cnvsSize.right - 10,cnvsSize.bottom - 50);
@@ -98,12 +93,34 @@ function drawGrid(nWide, nTall, xAxisVals, yAxisVals, cnvsSize) {
     var aLine = new paper.Path.Line(bottomLeftPoint, topLeftPoint)
     aLine.strokeColor = '#000';
 
+    var gridGroup = new Group(); // group for the gridLines, used for colorBoxes
+    gridGroup.removeChildren(); // if children, remove them
+
+ //   var txt2 = new PointText({point: new Point(200, 50)}); // for testing purposes:
+    // draw rectangles (grid lines):
+    for (var i = 0; i < nWide; i++) {
+        for (var j = 0; j < nTall; j++) {
+            var rect = new Path.Rectangle({
+                point: [50 + i * width_per_rect, 10 + j * height_per_rect],
+                size: [width_per_rect, height_per_rect],
+                strokeColor: "#777", 
+                strokeWidth: ".5",
+                fillColor: null, 
+            });
+            gridGroup.addChild(rect);
+ //           txt2.content = gridGroup.children.length;
+        }
+    }
+    return gridGroup; // returns the grid boxes group 
+    cnvs.activate(); // Define active layer:
 }
 
-// Colors boxes where there are lines
-function colorBoxes(nWide, nTall, cnvsSize, path, onOrOff) {
-    // change to the grid layer:
-    grid.activate();
+function colorBoxes(nWide, nTall, cnvsSize, gridGroup, allPaths) {
+    /* this runs over all the rectangles on the grid and colors
+    each box that a line crosses into */
+
+    grid.activate(); // Define active layer:
+
     // define the rectangle sizes from the grid
     var rect_width = (cnvsSize.width - 60) / nWide;
     var rect_height = (cnvsSize.height - 60) / nTall;
@@ -114,45 +131,17 @@ function colorBoxes(nWide, nTall, cnvsSize, path, onOrOff) {
         fill: true,
         tolerance: 1
     };
-    // for testing purposes:
-    var txt = new PointText({point: new Point(60, 130)});
-    // for each point in the path, see what box its in:
-    if (path.segments.length > 1) { // protects against coloring a box due to a click
-        for (i=0; i < path.segments.length; i++) {
-            pt = [path.segments[i]["point"]["x"], path.segments[i]["point"]["y"]];
-            if (onOrOff == 'on') {
-                // if coloring the boxes:
-                for (var j = 0; j < nWide; j++) {
-                    for (var k = 0; k < nTall; k++) {
-                        var rect = new paper.Path.Rectangle({
-                            point: [j*rect_width + 50, k * rect_height + 10], 
-                            size: [rect_width, rect_height]
-                        });
-                        if (rect.bounds.contains(pt)) {
-                            rect.fillColor = '#50ffba';
-                            rect.sendToBack(); // ensures boxes are behind grid lines
-                        } else {
-                            rect.remove();
-                        }
-                    }
-                }
-            } else {
-                // delete the boxes via a hit test
-                var hitResult = project.activeLayer.hitTest(pt, hitOptions);
-                txt.content =  "pt: " + pt + "\nLayer: " + project.activeLayer + "\nhitResult: " +
-                    hitResult + "  hitResult.item: " + hitResult.item + "\nParent: " + 
-                    hitResult.item.parent + " parent of parent: " + hitResult.item.parent.parent;
-                if (!hitResult)
-                    continue;
-                if (hitResult) {
-                    // if (hitResult.type == 'fill') {
-                        var rect = hitResult.item;
-                        rect.remove();
-                    // }
-                }
-            }
+
+    // find the crossing points between the path and the grid lines:
+    for (i = 0; i < gridGroup.children.length; i++) {
+        gridGroup.children[i].fillColor = null; // for each box, fillColor is removed
+        for (j = 0; j < allPaths.length; j++) {
+            var crossings = allPaths[j].getCrossings(gridGroup.children[i]);
+            if (crossings.length >= 1) {
+                gridGroup.children[i].fillColor = "#08CA75"; // for each crossing, fillColor is added
+                break; // once it's colored, moves onto next box
+            } 
         }
     }
-    // return to the canvas layer:
-    cnvs.activate();
-}
+    cnvs.activate(); // Define active layer
+    }

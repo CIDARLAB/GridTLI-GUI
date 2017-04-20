@@ -13,14 +13,17 @@
 	<script type="text/javascript" src="canvas.js"></script>
 </head>
 <body>
-	<div class="navbar">
-		<a href="#">Home</a>
-		<a href="#">About</a>
-	</div>
+	<nav>
+		<img src="phoenix_banner.png">
+		<ul>
+			<li><a href="#">Home</a></li>
+			<li><a href="#">About</a></li>
+		</ul>
+	</nav>
 	<div id="tab">
 		<article id="drawingGrid">
 			<canvas id="myCanvas"></canvas>
-			<p class="rotate" id="label">Y Label</p>
+			<p class="rotate" id="axisLabel">Y Label</p>
 		</article>
 		<div id="threshold">
 			<h3>Graph Values</h3>
@@ -86,36 +89,62 @@
 	<br><br>
 	<br><br>
 	<br><br>
-	<br>
-	<input type="text" id="xtmin" value="1"><br>
+	<br><br>
+	<br><br>
+	<!--<div class="sidebar-left">
+		<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed velit nisl, finibus id
+			sodales nec, pretium at turpis. Nulla lacinia velit vel velit auctor dapibus. Proin
+			pretium nisl et tristique luctus. Proin malesuada nunc tempus lacus varius porttitor.
+			Etiam viverra orci in semper venenatis. Orci varius natoque penatibus et magnis dis
+			parturient montes, nascetur ridiculus mus. Nunc id mi a nulla commodo mattis. 
+			Interdum et malesuada fames ac ante ipsum primis in faucibus. Vestibulum elit sapien, 
+			lacinia non justo ut, semper bibendum purus. Proin ac arcu in felis cursus eleifend 
+			sed eu neque. Morbi aliquet laoreet tempor. Morbi vel sodales urna, id tempus augue. 
+			Donec eu leo sit amet lectus accumsan venenatis eget in dolor. Vivamus lectus augue, 
+			gravida sed viverra nec, interdum dignissim dui. Vestibulum ante ipsum primis in 
+			faucibus orci luctus et ultrices posuere cubilia Curae; Donec dignissim orci at nisi 
+			laoreet, ut hendrerit sapien luctus.</p>
+		<p>Nunc sit amet augue ut enim fermentum dictum. Nullam quis lacinia magna. Maecenas 
+			luctus odio magna. Praesent eget volutpat tellus. Nam viverra sapien justo, eu 
+			volutpat massa mattis vitae. Quisque nec commodo nisi. Sed a aliquet lectus.</p>
+		<p>Ut egestas hendrerit quam, in porttitor felis ultricies vel. Vestibulum ante ipsum 
+			primis in faucibus orci luctus et ultrices posuere cubilia Curae; Phasellus mattis 
+			ipsum eu nisl tempus, in pulvinar est cursus. Quisque convallis orci urna. Suspendisse 
+			odio lorem, blandit auctor lorem id, tincidunt rutrum risus. Nam non elementum leo, ac 
+			malesuada est. Vivamus nec semper orci.</p>
+	</div>-->
+		
+	<!--<input type="text" id="xtmin" value="1"><br>
 	<input type="text" id="xtmax" value="1"><br>
 	<input type="text" id="ytmax" value="1"><br>
 	<input type="text" id="ct" value="1"><br>
 	<input id="xrange" value="1" style="width: 300px"><br>
-	<input id="yrange" value="1" style="width: 300px"><br>
+	<input id="yrange" value="1" style="width: 300px"><br>-->
 	<!-- tool buttons -->
-	<label>
-		<input type="radio" name="tool" class="btn" value="select">
-		<img src="icon-mouse.png" id="select" onClick="selectLine.activate()">
-	</label>
-	<label>
-		<input type="radio" name="tool" class="btn" value="pencil" checked>
-		<img src="icon-pencil.png" id="pencil" onClick="drawLine.activate()">
-	</label>	
+	<div id="tools">
+		<label>
+			<input type="radio" name="tool" class="btn" value="select" id="select">
+			<img src="icon-mouse.png" id="select" onClick="selectLine.activate()">
+		</label>
+		<label>
+			<input type="radio" name="tool" class="btn" value="pencil" id="pencil" checked>
+			<img src="icon-pencil.png" id="pencil" onClick="drawLine.activate()">
+		</label>	
 
-	<label>
-		<input type="radio" name="tool" class="btn" value="segment">
-		<img src="icon-segment.png" id="dot" onClick="drawPoints.activate()">
-	</label>
+		<label>
+			<input type="radio" name="tool" class="btn" value="segment" id="segment">
+			<img src="icon-segment.png" id="dot" onClick="drawPoints.activate()">
+		</label>
 
-	<label>
-		<input type="radio" name="tool" class="btn" value="eraser">
-		<img src="icon-eraser.png" id="eraser" onClick="deleteLines.activate()">
-	</label>
-	<label>
-		<input type="radio" name="tool" class="btn" value="move">
-		<img src="icon-move.png" id="move" onClick="movePoints.activate()">
-	</label>
+		<label>
+			<input type="radio" name="tool" class="btn" value="eraser" id="eraser">
+			<img src="icon-eraser.png" id="eraser" onClick="deleteLines.activate()">
+		</label>
+		<label>
+			<input type="radio" name="tool" class="btn" value="move" id="move">
+			<img src="icon-move.png" id="move" onClick="movePoints.activate()">
+		</label>
+	</div>
 
 </body>
 </html>
