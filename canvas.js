@@ -25,13 +25,6 @@ window.onload = function() {
         fillColor: 'black',
     });
 
-    // var cnvsKids = new PointText({
-    //     content: 'hi', // cnvs.children.length,
-    //     point: new Point(60, 400),
-    //     fillColor: 'black',
-    // });
-    // var pathGroup = new Group();
-
     grid = new Layer();
     grid.removeChildren();
 
@@ -89,13 +82,16 @@ window.onload = function() {
             return;
         if (hitResult) {
             path = hitResult.item;
+            index = hitResult.item.index;
             if (path.parent == project.activeLayer) {
+                allPathsList.splice(index,1);
                 // textItem.content = "cnvs!!!" + project.activeLayer + "\n" + hitResult.type;
                 path.fullySelected = true;
                 path.remove();
                 colorBoxes(timeDivs, spatialDivs, view.bounds, gridGroup, cnvs.children);
             }
         }
+        textItem.content = allPathsList + "\n" + allPathsList.length + "\n" + cnvs.children.length;
     }
 
     // Define tool to draw the whole line segment
@@ -130,7 +126,7 @@ window.onload = function() {
             if (event.point.x > path.segments[numSegments-1].point.x) {
                 path.add(event.point)
                 pointList.push(event.point.x, event.point.y);
-                // textItem.content = path.segments + "\n" + path.segments[0].point.x
+                // textItem.content = pointList; // path.segments + "\n" + path.segments[0].point.x
             }
         } 
     }
@@ -146,10 +142,9 @@ window.onload = function() {
         allPathsList.push(pointList); // add pointList for current path to the allPathsList
         pointList = []; // reinitialize the pointList
         // for testing purposes, display all paths and latest path
-        numPaths = allPathsList.length;
+        // numPaths = allPathsList.length;
         // textItem.content = allPathsList + "\n" + allPathsList[numPaths-1] + "\n";
         // textItem.content = "num segs: " + path.segments.length;
-        // cnvsKids.content = "drawLine cnvs.children: " + cnvs.children + "\n" + cnvs.children.length;
     }
 
 
@@ -159,17 +154,11 @@ window.onload = function() {
         /* the user can draw a line point-to-point if nothing is selected
            or the user can append to an existing line if already selected */
 
-        // // for testing purposes:   
-        // textItem.content = project.activeLayer.children + "\n" + project.selectedItems
-        //     + "\n" + path + "\n" + project.getItems({selected:true});
-
         cnvs.activate(); // Define active layer:
-
         // limits use to within graph bounds
         if ((50 <= event.point.x) && (event.point.x <= 700) &&
         (10 <= event.point.y) && (event.point.y <= 460)) {
-            // if nothing is selected, begin a new line:
-            if (path.selected) {
+            if (path.selected) { // if path is selected, find which one for allPathsList:
                 var currentChildren = project.activeLayer.children;
                 for (i = 0; i < currentChildren.length; i++) {
                     if (currentChildren[i] == project.getItems({selected:true})[1]) {
@@ -178,30 +167,41 @@ window.onload = function() {
                     }
                 }
                 // textItem.content = "old path: " + path + " length: " + allPathsList.length;
-            } else {
+            } else { // if no path is selected, create a new one:
                 path = new Path({
                     segments: [event.point],
                     strokeColor: 'black',
                     selected: true // select path to see segment points
                 });
-                cnvs.addChild(path);
                 if (allPathsList) {
-                    var pathOrder = allPathsList.length; // will be added as new path
-                } else {
+                    var pathOrder = allPathsList.length; // will be added as additional path
+                } 
+                else {
                     var pathOrder = 0;
                 }
                 // textItem.content = "new path: " + path + " order: " + pathOrder;
             }
+
             numSegments = path.segments.length;
-            if (event.point.x > path.segments[numSegments-1].point.x) {
+            if (event.point.x > path.segments[numSegments - 1].point.x) {
                 path.add(event.point)
+                pointList.push(event.point.x, event.point.y)
             } 
             // color the boxes where segments appear
             colorBoxes(timeDivs, spatialDivs, view.bounds, gridGroup, cnvs.children);
-            allPathsList[pathOrder].push(event.point.x, event.point.y); // modify pointList for current path to the allPathsList
+            // textItem.content = pathOrder + event.point.x + event.point.y + "\n" + allPathsList +
+            //  "\n" + allPathsList[pathOrder];
+            allPathsList[pathOrder].push(pointList);
+            // if (allPathsList[pathOrder]) {
+            //     {};
+            //     //  allPathsList[pathOrder].push(event.point.x, event.point.y);
+            // } else {
+            //     allPathsList[pathOrder].push([event.point.x, event.point.y])
+            // }
+            // modify pointList for current path to the allPathsList
             // for testing purposes, display all paths and latest path
-            // numPaths = allPathsList.length;
-            // textItem.content = allPathsList + "\n" + allPathsList[numPaths-1] + "\n";
+            numPaths = allPathsList.length;
+            textItem.content = pathOrder + "\n" + allPathsList + "\n" + allPathsList[numPaths-1] + "\n";
         }
     }
 
@@ -210,39 +210,46 @@ window.onload = function() {
     }
 
     drawPoints.onMouseUp = function(event) {
+        // cnvs.addChild(path);
         for (i = 1; i < path.segments.length; i++) {
             path.segments[i-1].smooth();
             // i offset allows smoothing per segment without affecting the whole path
         }
+        // allPathsList[pathOrder].push(event.point.x, event.point.y); // modify the pathList for the current path
+        
     }
-
 
     // Define tool for moving a single point on a line
     movePoints = new Tool();
     movePoints.onMouseDown = function(event) {
         cnvs.activate(); // Define the active layer:
-
-        segment = null;
-
+        segment = path = idx = null;;
         var hitResult = project.hitTest(event.point, hitOptions);
-
         // allows you to delete a segment when holding down "shift"
         if (event.modifiers.shift) {
             if (hitResult.type == 'segment') {
                 hitResult.segment.remove();
             };
-            return; // allows whole path to be moved while holding down shift
+            return;
         }
-
         if (hitResult) {
             if (hitResult.item.parent == project.activeLayer) {
                 if (hitResult.item.selected) {
+                    path = hitResult.item;
+                    path.fullySelected = true;
                     if (hitResult.type == 'segment') {
                         segment = hitResult.segment;
+                        idx = hitResult.segment.index;
+                        // textItem.content = "seg index: " + idx;
+                        textItem.content = "seg - 1: " + path.segments[idx - 1].point.x  + ", " + path.segments[idx-1].point.y +
+                        "\nseg + 1: " + path.segments[idx+1].point.x + ", " + path.segments[idx+1].point.y +
+                        "\n" + hitResult.item + " " + path;
                     } else if (hitResult.type == 'stroke') {
-                        var location = hitResult.location;
-                        segment = path.insert(location.index + 1, event.point);
-                        segment.smooth(); // smooths only the strokes around the segment
+                        // idx = hitResult.segment.index;
+                        // path.curve[idx-1].handle1
+                        // var location = hitResult.location;
+                        // segment = path.insert(location.index + 1, event.point);
+                        // segment.smooth(); // smooths only the strokes around the segment
                     }
                 }
             }
@@ -250,22 +257,77 @@ window.onload = function() {
     }
 
     movePoints.onMouseDrag = function(event) {
+        // stores original segment coordinates
+        origx = segment.point.x;
+        origy = segment.point.y;
         if (segment) {
+            // segment.fullySelected = true;
             // adding doesn't function properly using window scope, necessary to add manually
             segment.point.x = segment.point.x + event.delta.x;
             segment.point.y = segment.point.y + event.delta.y;
+
+            // textItem.content = path;
+            if ((segment.point.x < path.segments[idx+1].point.x - 2) &&
+            (segment.point.x > path.segments[idx-1].point.x + 2)) {
+                textItem.content = " ";
+                // "Your line is a function." + "\n" +
+                // path.curves[idx-1].bounds + "\n" + path.curves[idx].bounds;
+                
+                // for segment index = 2, the curves are 1 and 2;
+                // for segment index = 5, the curves are 4 and 5;
+                // path.segments[idx].strokeColor = 'black';
+                // path.segments[idx].selectedColor = null;
+            } else {
+                textItem.content = "Your line is no longer a function." 
+                // + "\n" +
+                // "current: " + segment.point.x + ", " + segment.point.y +
+                // "borders: " + path.segments[idx-1].point.x + " to " + path.segments[idx+1].point.x;
+                segment.point.x = origx; // limits x coordinate within boundaries
+                // segment.point.y = origy;
+                // path.segments[idx].strokeColor = 'red';
+                // path.segments[idx].selectedColor = 'red';
+            }
             segment.smooth(); // smooths only the strokes around the segment
+            textItem.content = "handle1: " + path.curves[idx-1].handle1 + "\nhandle2: " + path.curves[idx-1].handle2 +
+            "\nhandle1: " + path.curves[idx].handle1 + "\nhandle2: " + path.curves[idx].handle2;;
+            // path.curves[idx-1].bounds.x = path.segments[idx-1].point.x + 5;
+            // path.curves[idx].bounds.width = path.segments[idx+1].point.x - segment.point.x - 5;
+            // textItem.content = "previous: " + origx + ", " + origy + "\ncurrent: " + segment.point.x + ", " + segment.point.y;
+            // "\nleft: " + path.segments[idx-1].point.x + " right: " + path.segments[idx+1].point.x;
         } else if (path) {
             path.position.x = path.position.x + event.delta.x;
             path.position.y = path.position.y + event.delta.y;
         }
     }
-
+    
     movePoints.onMouseUp = function(event) {
         colorBoxes(timeDivs, spatialDivs, view.bounds, gridGroup, cnvs.children);
+        dif1 = path.segments[idx].point.x - path.segments[idx - 1].point.x;
+        while (dif1 < path.curves[idx - 1].bounds.width) {
+            path.curves[idx - 1].handle2.x = path.curves[idx - 1].handle2.x + 0.5;
+            if (path.curves[idx - 1].handle2.x == 1) 
+                break;
+        }
+        dif2 = path.segments[idx + 1].point.x - path.segments[idx].point.x;
+        while (dif2 < path.curves[idx].bounds.width) {
+            path.curves[idx].handle1.x = path.curves[idx].handle1.x - 0.5;
+            if (path.curves[idx - 1].handle2.x == -1) 
+                break;
+        }
+        // path.curves[idx-1].bounds.width = dif;
+        textItem.content = path.segments[idx + 1].point.x + " - " + path.segments[idx].point.x +
+        " = " + dif2 + "\n" + path.curves[idx].bounds.width
+        // segment.smooth(); // smooths only the strokes around the segment
+        // path.curves[idx-1].handle2 = [0,1];
+        path.fullySelected = false;
+        path.selected = true;
+        path.fullySelected = true;
+        // path.selected = true;
+        // path.curves[idx-1].bounds.x = path.segments[idx-1].point.x + 5;
+        // path.curves[idx].bounds.width = path.segments[idx+1].point.x - segment.point.x - 5;
     }
 
-    view.draw();
+    // view.draw();
     drawLine.activate(); // begins with the pencil activated
 
 }
