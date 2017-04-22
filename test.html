@@ -1,0 +1,96 @@
+<!doctype html>  
+<html>  
+<head>
+<script type="text/javascript">
+function performClick(elemId) {
+   var elem = document.getElementById(elemId);
+   if(elem && document.createEvent) {
+      var evt = document.createEvent("MouseEvents");
+      evt.initEvent("click", true, false);
+      elem.dispatchEvent(evt);
+   }
+   alert(elem.value);
+}
+</script>
+</head>  
+<body>
+
+<a href='#' onclick='downloadCSV({ filename: "stock-data.csv" });'>Download CSV</a>
+
+<script type="text/javascript">  
+    var stockData = [
+        {
+            Symbol: "AAPL",
+            Company: "Apple Inc.",
+            Price: "132.54"
+        },
+        {
+            Symbol: "INTC",
+            Company: "Intel Corporation",
+            Price: "33.45"
+        },
+        {
+            Symbol: "GOOG",
+            Company: "Google Inc",
+            Price: "554.52"
+        },
+    ];
+
+    function convertArrayOfObjectsToCSV(args) {
+        var result, ctr, keys, columnDelimiter, lineDelimiter, data;
+
+        data = args.data || null;
+        if (data == null || !data.length) {
+            return null;
+        }
+
+        columnDelimiter = args.columnDelimiter || ',';
+        lineDelimiter = args.lineDelimiter || '\n';
+
+        keys = Object.keys(data[0]);
+
+        result = '';
+        result += keys.join(columnDelimiter);
+        result += lineDelimiter;
+
+        data.forEach(function(item) {
+            ctr = 0;
+            keys.forEach(function(key) {
+                if (ctr > 0) result += columnDelimiter;
+
+                result += item[key];
+                ctr++;
+            });
+            result += lineDelimiter;
+        });
+
+        return result;
+    }
+
+    function downloadCSV(args) {
+        var data, filename, link;
+
+        var csv = convertArrayOfObjectsToCSV({
+            data: stockData
+        });
+        if (csv == null) return;
+
+        filename = args.filename || 'export.csv';
+
+        if (!csv.match(/^data:text\/csv/i)) {
+            csv = 'data:text/csv;charset=utf-8,' + csv;
+        }
+        data = encodeURI(csv);
+		alert(data); 
+        link = document.createElement('a');
+        link.setAttribute('href', data);
+        link.setAttribute('download', filename);
+		alert(link);
+        link.click(alert("clicked"));
+    }
+</script>  
+
+<a href="#" onclick="performClick('theFile');">Open file dialog</a>
+<input type="file" id="theFile" />
+</body>  
+</html>  

@@ -1,7 +1,7 @@
 // Make the paper scope global, by injecting it into window:
 paper.install(window);
 // Initialize List of tools
-var drawLine, drawPoints, selectLine, deleteLines, appendPoints, movePoints;
+var saveCanvasJson, drawLine, drawPoints, selectLine, deleteLines, appendPoints, movePoints;
 // Initialize Graph values
 var timeValues = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
 var spatialValues = [-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6];
@@ -230,7 +230,8 @@ window.onload = function() {
     movePoints.onMouseUp = function(event) {
         colorBoxes(timeDivs, spatialDivs, view.bounds, path, 'on');
     }
-
+	
+	
     view.draw();
     drawLine.activate(); // begins with the pencil activated
 

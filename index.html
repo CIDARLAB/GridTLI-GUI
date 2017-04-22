@@ -5,17 +5,66 @@
     <title>GridTLI GUI</title>
 	<!-- load script that controls grid functions -->
 	<script type="text/javascript" src="gridfunctions.js"></script>
+	<!-- load script that contains import and export functions --> 
+	<script type="text/javascript" src="export_import.js"></script>
 	<!-- load custom stylesheet -->
     <link rel="stylesheet" href="style.css"></link>
 	<!-- load paper.js -->
     <script type="text/javascript" src="paper-full.js"></script>
 	<!-- load script that defines the canvas -->
 	<script type="text/javascript" src="canvas.js"></script>
+		<script type="text/javascript"> 
+<!-- 	
+	     //   function addEvent(obj, event, func) {
+       //     if (obj.addEventListener) {
+     //           obj.addEventListener(event, func, false);
+             //   return true;
+           // } else if (obj.attachEvent) {
+           //     obj.attachEvent('on' + event, func);
+         //   } else {
+        //        var f = obj['on' + event];
+               // obj['on' + event] = typeof f === 'function' ? function() {
+             //       f();
+            //        func();
+           //     } : func
+          //  }
+        //} -->
+			function f1(args) {
+					alert("f1 called");
+					var the_data, hiddenElement, filename; 
+					var the_json = project.exportJSON(); 
+					var js_string = JSON.stringify(the_json);
+					alert(js_string);
+					var data = "data:text/json;charset=utf-8," + encodeURIComponent(js_string); 
+					<!-- return data; -->
+					
+					filename = args.filename || 'data.json';
+					alert(filename);
+					hiddenElement = document.createElement('a');
+					hiddenElement.setAttribute('href', data);
+					hiddenElement.setAttribute('download', filename);
+					alert(hiddenElement);
+					document.body.appendChild(hiddenElement);
+					hiddenElement.click(alert("clicked")); 
+			//form validation that recalls the page showing with supplied inputs.    
+			}
+			<!-- document.getElementById("Save").addEventListener = function fun() { -->
+			<!-- alert("hello"); -->
+			<!-- data = f1(); -->
+			<!-- $('<a href="data:' + data + '"download="data.json"></a>').appendTo('#navbar') -->
+        //validation code to see State field is mandatory.  
+		
+		 $.getJSON('/path/to/your/file.json', function (data) {
+        project.importJSON(data);
+		});
+  
+	</script> 	
 </head>
 <body>
-	<div class="navbar">
+	<div id="navbar" class="navbar">
 		<a href="#">Home</a>
 		<a href="#">About</a>
+		<a href="STL_Text_editor/ace-builds-master/editor.html"> Editor </a>
 	</div>
 	<div id="tab">
 		<article id="drawingGrid">
@@ -116,6 +165,29 @@
 		<input type="radio" name="tool" class="btn" value="move">
 		<img src="icon-move.png" id="move" onClick="movePoints.activate()">
 	</label>
-
+	<label>
+		<input type="radio" name="the_save" class="btn" value="save"> 
+		<img src="save.png" id="save" onClick='f1({ filename: "whoo.json" });'>
+	</label> 
+	<label> 
+		<input type="file" id="fileinput" onchange="startRead()"/> 
+		<img src="icon-upload.png" id="upload"> 
+		<script type="text/javascript" > 
+document.getElementById('fileinput').addEventListener('change', function(){
+	alert("did the listener work");
+    var file = this.files[0];
+	alert(file.name);
+    // This code is only for demo ...
+<!-- 	$.getJSON(file.name, functon(json) { 
+		//alert(json);
+		//}); -->
+	project.importJSON(file);
+    console.log("name : " + file.name);
+    console.log("size : " + file.size);
+    console.log("type : " + file.type);
+    console.log("date : " + file.lastModified);
+}, false);
+	</script> 
+	</label>
 </body>
 </html>

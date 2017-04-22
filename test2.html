@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Inkscape</title>
+  <link rel="stylesheet" href="../css/style.css">
+	<script type="text/javascript" src="../../dist/paper.js"></script>
+</head>
+<body>	
+	<canvas id="canvas" width="400" height="400"></canvas>
+  <input id="upload" type="file" />
+  <div id="mock"></div>
+  <script type="text/paperscript" canvas="canvas">
+
+    window.canvas = project;
+
+    var input = document.getElementById('upload');
+    var mock = document.getElementById('mock');
+    var filter = /^image\/(?:json\+xml)$/i;
+
+
+    input.addEventListener('change', function(){
+      var i = 0, 
+        len = this.files.length, 
+        img, file;
+            
+      for ( ; i < len; i++ ) { 
+
+        file = this.files[i];  
+
+        if ( !( filter.test( file.type )) ){
+          alert('bad file type');
+          return null;
+        } 
+
+        var reader = new FileReader(); 
+        reader.onloadend = function (e) {  
+          mock.innerHTML = e.target.result;
+          var json = mock.querySelector('json');
+          var start = Date.now();
+          project.importJSON( json );
+          mock.innerHTML = "";
+          console.log(Date.now() - start);
+          console.log(project.exportJSON()); 
+        };  
+        reader.readAsText(file);  
+               
+      } 
+    }, true)
+  </script>
+</body>
+</html>
