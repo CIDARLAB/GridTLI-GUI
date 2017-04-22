@@ -28,22 +28,16 @@ function changeValues(){
     var spatialThresh = document.getElementById('sThresh').value;
     var timeThresh = document.getElementById('tThresh').value;
     
-    spatialDivs = Math.ceil((spatialMax - spatialMin) / spatialThresh);
-    timeDivs = Math.ceil(timeMax / timeThresh);
+    nSpatialDivs = Math.ceil((spatialMax - spatialMin) / spatialThresh);
+    nTimeDivs = Math.ceil(timeMax / timeThresh);
    
-    timeValues = linspace(0,timeMax,timeDivs + 1)
-    spatialValues = linspace(spatialMin,spatialMax,spatialDivs + 1)
+    timeValues = linspace(0,timeMax,nTimeDivs + 1)
+    spatialValues = linspace(spatialMin,spatialMax,nSpatialDivs + 1)
     spatialValues.reverse() // grid writes top to bottom, therefore reverse the y-axis values
 
     // draw the new grid
-    gridGroup = drawGrid(timeDivs, spatialDivs, timeValues, spatialValues, view.bounds);
+    gridGroup = drawGrid(nTimeDivs, nSpatialDivs, timeValues, spatialValues, view.bounds);
 
-    // document.getElementById('xtmin').value = spatialMin;
-    // document.getElementById('xtmax').value = spatialMax;
-    // document.getElementById('ytmax').value = spatialDivs;
-    // document.getElementById('ct').value = timeDivs;
-    // document.getElementById('xrange').value = spatialValues;
-    // document.getElementById('yrange').value = timeValues;
     return gridGroup;
 };
 
@@ -118,7 +112,6 @@ function drawGrid(nWide, nTall, xAxisVals, yAxisVals, cnvsSize) {
 function colorBoxes(nWide, nTall, cnvsSize, gridGroup, allPaths) {
     /* this runs over all the rectangles on the grid and colors
     each box that a line crosses into */
-
     grid.activate(); // Define active layer:
 
     // define the rectangle sizes from the grid
@@ -139,9 +132,28 @@ function colorBoxes(nWide, nTall, cnvsSize, gridGroup, allPaths) {
             var crossings = allPaths[j].getCrossings(gridGroup.children[i]);
             if (crossings.length >= 1) {
                 gridGroup.children[i].fillColor = "#08CA75"; // for each crossing, fillColor is added
-                break; // once it's colored, moves onto next box
+                break; // once it's colored, moves onto next box without performing further checks
             } 
         }
     }
     cnvs.activate(); // Define active layer
     }
+
+
+function changePathValues(allPathsList, timeMax, spatialMin, spatialMax) {
+    adjustedOutput = []; // initializes as empty array
+    // txt.content = 'got through 1';
+    for (i = 0; i < allPathsList.length; i++) { // for all the paths
+        adjustedOutput[i] = []; // initializes an empty subarray
+        // txt.content = "got through 2";
+        for (j = 0; j < allPathsList[i].length; j++) { // for all pairs in the current path
+            if (j%2 == 0) {
+                adjustedOutput[i].push((allPathsList[i][j] - 50) * timeMax / 650);
+            } else {
+                adjustedOutput[i].push(((460 - allPathsList[i][j]) * (spatialMax - spatialMin) / 450) + spatialMin);
+            }
+            // txt.content = "got through 3 or 4...";
+        }
+    }
+    return adjustedOutput;
+}

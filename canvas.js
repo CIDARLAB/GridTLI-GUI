@@ -6,8 +6,14 @@ var selectLine, drawLine, drawPoints, deleteLines, movePoints;
 var timeValues = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
 var spatialValues = [-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6];
 spatialValues.reverse() // graph writes top to bottom therefore reversed
-var spatialDivs = 12;
-var timeDivs = 16;
+var nSpatialDivs = 12;
+var nTimeDivs = 16;
+var spatialMin = -6;
+var spatialMax = 6;
+var timeMax = 16;
+
+// Initialize Save/Output Array
+var adjustedOutput;
 
 // Load the window
 window.onload = function() {
@@ -16,7 +22,8 @@ window.onload = function() {
     myCanvas.style.background = '#ccc'; 
 
     // initialize variables
-    var segment, path;
+    var segment;
+    var path = new Path();
     var allPathsList = [];
     var pointList = [];
     var textItem = new PointText({
@@ -24,11 +31,11 @@ window.onload = function() {
         point: new Point(60, 30),
         fillColor: 'black',
     });
-
+    
     grid = new Layer();
     grid.removeChildren();
 
-    gridGroup = drawGrid(timeDivs, spatialDivs, timeValues, spatialValues, paper.view.bounds);
+    gridGroup = drawGrid(nTimeDivs, nSpatialDivs, timeValues, spatialValues, paper.view.bounds);
 
     cnvs = new Layer({
         children: path, // allPathsList, pointList, textItem, // pathGroup,
@@ -68,30 +75,27 @@ window.onload = function() {
     }
 
     selectLine.onMouseDrag = function(event) {
-        return; // prevents selectLine from drawing lines 
+        return; // prevents selectLine from drawing continuous lines 
     }
 
     // Define tool for deleting lines
     deleteLines = new Tool();
     deleteLines.onMouseDown = function(event) {
         cnvs.activate(); // Define active layer:
-        // textItem.content = project.activeLayer; // error checking
-        // Check if a click lands on a line or not ("hit test")
-        var hitResult = project.hitTest(event.point, hitOptions);
+        var hitResult = project.hitTest(event.point, hitOptions); // check if click is on a line
         if (!hitResult)
             return;
         if (hitResult) {
             path = hitResult.item;
-            index = hitResult.item.index;
+            idx = hitResult.item.index;
             if (path.parent == project.activeLayer) {
-                allPathsList.splice(index,1);
-                // textItem.content = "cnvs!!!" + project.activeLayer + "\n" + hitResult.type;
+                allPathsList.splice(idx,1);
                 path.fullySelected = true;
                 path.remove();
-                colorBoxes(timeDivs, spatialDivs, view.bounds, gridGroup, cnvs.children);
+                colorBoxes(nTimeDivs, nSpatialDivs, view.bounds, gridGroup, cnvs.children);
             }
         }
-        textItem.content = allPathsList + "\n" + allPathsList.length + "\n" + cnvs.children.length;
+        // textItem.content = allPathsList + "\n" + allPathsList.length + "\n" + cnvs.children.length;
     }
 
     // Define tool to draw the whole line segment
@@ -101,14 +105,13 @@ window.onload = function() {
         // limits use to within graph bounds
         if ((50 <= event.point.x) && (event.point.x <= 700) &&
         (10 <= event.point.y) && (event.point.y <= 460)) {
-            // deselect current path:
             var children = cnvs.children;
             for (i = 0; i < children.length; i++) {
                 if (children[i].selected) {
-                    path.selected = false;
+                    path.selected = false; // if path is selected, deselect it
                 }
             }
-            path = new Path({ // creates a new path 
+            path = new Path({ // create a new path 
                 segments: [event.point],
                 strokeColor: 'black',
                 selected: true
@@ -135,16 +138,26 @@ window.onload = function() {
     drawLine.onMouseUp = function(event) {
         cnvs.addChild(path);
         // textItem.content = "cnvs children: " + cnvs.children;
-        // project.activeLayer.addChild(path); // add path to the active layer
         // color the boxes where segments appear
-        colorBoxes(timeDivs, spatialDivs, view.bounds, gridGroup, cnvs.children);
+        // textItem.content = "ao prior1: " + adjustedOutput + "\nt: " +
+        //     nTimeDivs + ", s: " + nSpatialDivs + "\nbounds: " + view.bounds + "\nkids: " + 
+        //     cnvs.children.length + " gridlength: " + gridGroup.children.length;
+
+        colorBoxes(nTimeDivs, nSpatialDivs, view.bounds, gridGroup, cnvs.children);
+        // textItem.content = "ao prior2: " + adjustedOutput;
+
         // path.selected = false; // deselect the current path
         allPathsList.push(pointList); // add pointList for current path to the allPathsList
         pointList = []; // reinitialize the pointList
-        // for testing purposes, display all paths and latest path
-        // numPaths = allPathsList.length;
-        // textItem.content = allPathsList + "\n" + allPathsList[numPaths-1] + "\n";
+
+        // for testing purposes, display all paths and latest path        
+        numPaths = allPathsList.length;
+        // textItem.content = allPathsList + "\n" + allPathsList[numPaths-1] + "\n" + allPathsList[numPaths-1][0];
         // textItem.content = "num segs: " + path.segments.length;
+        // adjustedOutput = new Array();
+        // textItem.content = "ao prior3: " + adjustedOutput;
+        var adjustedOutput = changePathValues(allPathsList, timeMax, spatialMin, spatialMax);
+        textItem.content = "a0: " + adjustedOutput.length + "\n" + adjustedOutput[numPaths - 1];
     }
 
 
@@ -188,20 +201,13 @@ window.onload = function() {
                 pointList.push(event.point.x, event.point.y)
             } 
             // color the boxes where segments appear
-            colorBoxes(timeDivs, spatialDivs, view.bounds, gridGroup, cnvs.children);
+            colorBoxes(nTimeDivs, nSpatialDivs, view.bounds, gridGroup, cnvs.children);
             // textItem.content = pathOrder + event.point.x + event.point.y + "\n" + allPathsList +
             //  "\n" + allPathsList[pathOrder];
             allPathsList[pathOrder].push(pointList);
-            // if (allPathsList[pathOrder]) {
-            //     {};
-            //     //  allPathsList[pathOrder].push(event.point.x, event.point.y);
-            // } else {
-            //     allPathsList[pathOrder].push([event.point.x, event.point.y])
-            // }
-            // modify pointList for current path to the allPathsList
             // for testing purposes, display all paths and latest path
-            numPaths = allPathsList.length;
-            textItem.content = pathOrder + "\n" + allPathsList + "\n" + allPathsList[numPaths-1] + "\n";
+            // numPaths = allPathsList.length;
+            // textItem.content = pathOrder + "\n" + allPathsList + "\n" + allPathsList[numPaths-1] + "\n";
         }
     }
 
@@ -241,15 +247,16 @@ window.onload = function() {
                         segment = hitResult.segment;
                         idx = hitResult.segment.index;
                         // textItem.content = "seg index: " + idx;
-                        textItem.content = "seg - 1: " + path.segments[idx - 1].point.x  + ", " + path.segments[idx-1].point.y +
-                        "\nseg + 1: " + path.segments[idx+1].point.x + ", " + path.segments[idx+1].point.y +
-                        "\n" + hitResult.item + " " + path;
+                        // textItem.content = "seg - 1: " + path.segments[idx - 1].point.x  + ", " + path.segments[idx-1].point.y +
+                        // "\nseg + 1: " + path.segments[idx+1].point.x + ", " + path.segments[idx+1].point.y +
+                        // "\n" + hitResult.item + " " + path;
                     } else if (hitResult.type == 'stroke') {
                         // idx = hitResult.segment.index;
                         // path.curve[idx-1].handle1
-                        // var location = hitResult.location;
-                        // segment = path.insert(location.index + 1, event.point);
-                        // segment.smooth(); // smooths only the strokes around the segment
+                        var location = hitResult.location;
+                        segment = path.insert(location.index + 1, event.point);
+
+                        segment.smooth(); // smooths only the strokes around the segment
                     }
                 }
             }
@@ -260,12 +267,15 @@ window.onload = function() {
         // stores original segment coordinates
         origx = segment.point.x;
         origy = segment.point.y;
+        idx = segment.index;
+        // textItem.content = path + " s: " + segment.index + " idx: " + idx;
+
+        
         if (segment) {
             // segment.fullySelected = true;
             // adding doesn't function properly using window scope, necessary to add manually
             segment.point.x = segment.point.x + event.delta.x;
             segment.point.y = segment.point.y + event.delta.y;
-
             // textItem.content = path;
             if ((segment.point.x < path.segments[idx+1].point.x - 2) &&
             (segment.point.x > path.segments[idx-1].point.x + 2)) {
@@ -288,8 +298,8 @@ window.onload = function() {
                 // path.segments[idx].selectedColor = 'red';
             }
             segment.smooth(); // smooths only the strokes around the segment
-            textItem.content = "handle1: " + path.curves[idx-1].handle1 + "\nhandle2: " + path.curves[idx-1].handle2 +
-            "\nhandle1: " + path.curves[idx].handle1 + "\nhandle2: " + path.curves[idx].handle2;;
+            // textItem.content = "handle1: " + path.curves[idx-1].handle1 + "\nhandle2: " + path.curves[idx-1].handle2 +
+            // "\nhandle1: " + path.curves[idx].handle1 + "\nhandle2: " + path.curves[idx].handle2;;
             // path.curves[idx-1].bounds.x = path.segments[idx-1].point.x + 5;
             // path.curves[idx].bounds.width = path.segments[idx+1].point.x - segment.point.x - 5;
             // textItem.content = "previous: " + origx + ", " + origy + "\ncurrent: " + segment.point.x + ", " + segment.point.y;
@@ -301,7 +311,7 @@ window.onload = function() {
     }
     
     movePoints.onMouseUp = function(event) {
-        colorBoxes(timeDivs, spatialDivs, view.bounds, gridGroup, cnvs.children);
+        colorBoxes(nTimeDivs, nSpatialDivs, view.bounds, gridGroup, cnvs.children);
         dif1 = path.segments[idx].point.x - path.segments[idx - 1].point.x;
         while (dif1 < path.curves[idx - 1].bounds.width) {
             path.curves[idx - 1].handle2.x = path.curves[idx - 1].handle2.x + 0.5;
@@ -327,7 +337,6 @@ window.onload = function() {
         // path.curves[idx].bounds.width = path.segments[idx+1].point.x - segment.point.x - 5;
     }
 
-    // view.draw();
     drawLine.activate(); // begins with the pencil activated
 
 }
