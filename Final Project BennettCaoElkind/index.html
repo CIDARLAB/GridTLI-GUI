@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+    <title>GridTLI GUI</title>
+	<!-- load script that controls grid functions -->
+	<script type="text/javascript" src="gridfunctions.js"></script>
+	<!-- load custom stylesheet -->
+    <link rel="stylesheet" href="style.css"></link>
+	<!-- load paper.js -->
+    <script type="text/javascript" src="paper-full.js"></script>
+	<!-- load script that defines the canvas -->
+	<script type="text/javascript" src="canvas.js"></script>
+</head>
+<body>
+	<nav>
+		<img src="phoenix_banner.png">
+		<ul>
+			<li><a href="#">Home</a></li>
+			<li><a href="#">STL</a></li>
+		</ul>
+	</nav>
+	<div class="tab">
+		<article id="drawingGrid">
+			<canvas id="myCanvas"></canvas>
+			<p class="rotate" id="axisLabel">Spatial Magnitude</p>
+		</article>
+		<div class="tools">
+			<label>
+				<input type="radio" name="tool" class="btn" value="select" id="select" alt="select">
+				<img src="icon-mouse.png" id="select" onClick="selectLine.activate()">
+			</label>
+			<label>
+				<input type="radio" name="tool" class="btn" value="pencil" id="pencil" alt="pencil"checked>
+				<img src="icon-pencil.png" id="pencil" onClick="drawLine.activate()">
+			</label>	
+
+			<label>
+				<input type="radio" name="tool" class="btn" value="segment" id="segment" alt="point">
+				<img src="icon-segment.png" id="dot" onClick="drawPoints.activate()">
+			</label>
+
+			<label>
+				<input type="radio" name="tool" class="btn" value="eraser" id="eraser" alt="eraser">
+				<img src="icon-eraser.png" id="eraser" onClick="deleteLine.activate()">
+			</label>
+			<label>
+				<input type="radio" name="tool" class="btn" value="move" id="move" alt="move">
+				<img src="icon-move.png" id="move" onClick="movePoints.activate()">
+			</label>
+			<label>
+				<input type="radio" name="tool" class="btn" value="save" id="save" alt="save">
+				<img src="icon-save.png" id="save" onClick="saveStuff()">
+			</label>
+		</div>
+		<div id="threshold">
+			<h3>Graph Values</h3>
+			<article class="spatial">
+				<article class="graphLabels">
+					<p>Spatial:</p>
+				</article>
+				<article class="graphValues">
+					<input type="text" id="smin" value="X_min"
+						onblur="if (this.value == '') {this.value = 'X_min';}"
+						onfocus="if (this.value == 'X_min') {this.value = '';}" />
+					<br>
+					<input type="text" id="smax" value="X_max"
+						onblur="if (this.value == '') {this.value = 'X_max';}"
+						onfocus="if (this.value == 'X_max') {this.value = '';}" />
+				</article>
+			</article>
+			<article class="temporal">
+				<article class="graphLabels">
+					<p>Temporal:</p>
+				</article>
+				<article class="graphValues">
+					<input type="text" id="tmax" value="Y_max"
+						onblur="if (this.value == '') {this.value = 'Y_max';}"
+						onfocus="if (this.value == 'Y_max') {this.value = '';}" />
+				</article>
+			</article>
+			<h3 class="thresh">Threshold Values</h3>
+			<article class="spatial">
+				<article class="threshLabels">
+					<p>Spatial:</p>
+				</article>
+				<article class="threshValues">
+					<input type="text" id="sThresh" value="Xt"
+						onblur="if (this.value == '') {this.value = 'Xt';}"
+						onfocus="if (this.value == 'Xt') {this.value = '';}" />
+				</article>
+			</article>
+			<article class="temporal">
+				<article class="threshLabels">
+					<p>Temporal:</p>
+				</article>
+				<article class="threshValues">
+					<input type="text" id="tThresh" value="Yt"
+						onblur="if (this.value == '') {this.value = 'Yt';}"
+						onfocus="if (this.value == 'Yt') {this.value = '';}" />
+				</article>
+			</article>
+			<article class="cluster">
+				<article class="threshLabels">
+					<p>Cluster:</p>
+				</article>
+				<article class="threshValues">
+					<input type="text" id="cluster" value="Ct"
+						onblur="if (this.value == '') {this.value = 'Ct';}"
+						onfocus="if (this.value == 'Ct') {this.value = '';}" />
+				</article>
+			</article>
+			<button type="button" id="changeVals" onClick="changeValues()">Run</button>
+		</div>
+	</div>
+	<div class="footer">
+		<a href="http://cidarlab.org/" target="_blank">
+			<img src="cidar_s.png" alt="CIDAR Lab" style="width:210px">
+		</a>
+		<a href="http://www.bu.edu" target="_blank">
+			<img src="bu.png" alt="BU.EDU">
+		</a>
+	</div>
+</body>
+</html>
