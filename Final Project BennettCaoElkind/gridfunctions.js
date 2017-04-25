@@ -36,6 +36,7 @@ function changeValues(){
 
     // draw the new grid
     gridGroup = drawGrid(nTimeDivs, nSpatialDivs, timeValues, spatialValues, view.bounds);
+    colorBoxes(nTimeDivs, nSpatialDivs, view.bounds, gridGroup, cnvs.children)
 
     return gridGroup;
 };

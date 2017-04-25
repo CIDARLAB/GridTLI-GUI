@@ -1,6 +1,6 @@
 html, body {
     margin: 0;
-    overflow: scroll;
+    overflow: auto;
     height: 100%;
     background-color: white;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
@@ -12,7 +12,7 @@ html, body {
     /*float: right;*/
     width: 950px;
     height: 580px;
-    margin: 120px auto;
+    margin: 60px auto;
     background-color: white;
     padding: 20px;
     /*text-align: center;*/
@@ -186,8 +186,8 @@ nav a:hover {
 
 
 .footer img {
-    height: 74px;
-    width: 160px;
+    height: 50px;
+    width: 108px;
 }
 
 /* GENERAL */
