@@ -12,8 +12,12 @@ var spatialMin = -6;
 var spatialMax = 6;
 var timeMax = 16;
 
-// Initialize Save/Output Array
+// Initialize Save/Output Variables
+var allPathsList = [];
 var adjustedOutput;
+
+// For Easy Testing
+var textItem;
 
 // Load the window
 window.onload = function() {
@@ -24,10 +28,7 @@ window.onload = function() {
     // initialize variables
     var segment;
     var path = new Path();
-    var allPathsList = [];
-    var pointList = [];
-    var textItem = new PointText({
-        content: 'Click and drag to draw a line.',
+    textItem = new PointText({
         point: new Point(60, 30),
         fillColor: 'black',
     });
@@ -125,7 +126,6 @@ window.onload = function() {
             numSegments = path.segments.length;
             if (event.point.x > path.segments[numSegments-1].point.x) {
                 path.add(event.point)
-                pointList.push(event.point.x, event.point.y);
             }
         } 
     }
@@ -135,9 +135,9 @@ window.onload = function() {
         cnvs.addChild(path);
         // color the boxes where segments appear
         colorBoxes(nTimeDivs, nSpatialDivs, view.bounds, gridGroup, cnvs.children);
-        allPathsList.push(pointList); // add pointList for current path to the allPathsList
-        pointList = []; // reinitialize the pointList
-        // for testing
+        allPathsList.push(getPointsFromPath(path)); // add new points to the allPathsList
+        // for testing:
+        // textItem.content = allPathsList + "\n" + allPathsList[allPathsList.length-1];
         // var adjustedOutput = changePathValues(allPathsList, timeMax, spatialMin, spatialMax);
     }
 
@@ -161,13 +161,7 @@ window.onload = function() {
                 return;
             }
             if (path.selected) { // if path is selected, find which one for allPathsList:
-                var currentChildren = project.activeLayer.children;
-                for (i = 0; i < currentChildren.length; i++) {
-                    if (currentChildren[i] == project.getItems({selected:true})[1]) {
-                        path = project.activeLayer.children[i];
-                        var pathOrder = i; // will be appended to existing path
-                    }
-                }
+                pathIndex = getPathIndex(path)
             } else { // if no path is selected, create a new one:
                 path = new Path({
                     segments: [event.point],
@@ -175,25 +169,21 @@ window.onload = function() {
                     selected: true // select path to see segment points
                 });
                 if (allPathsList) {
-                    var pathOrder = allPathsList.length; // will be added as additional path
+                    var pathIndex = allPathsList.length; // will be added as additional path
                 } 
                 else {
-                    var pathOrder = 0;
+                    var pathIndex = 0;
                 }
             }
-
-            numSegments = path.segments.length;
-            if (event.point.x > path.segments[numSegments - 1].point.x) {
+            if (event.point.x > path.segments[path.segments.length - 1].point.x) {
                 path.add(event.point)
-                pointList.push(event.point.x, event.point.y)
             } 
             // color the boxes where segments appear
             colorBoxes(nTimeDivs, nSpatialDivs, view.bounds, gridGroup, cnvs.children);
-            allPathsList[pathOrder].push(pointList);
+            allPathsList[pathIndex].push(event.point);
             // for testing purposes, display all paths and latest path
-            // numPaths = allPathsList.length;
-            // textItem.content = pathOrder + "\n" + allPathsList + "\n" + allPathsList[numPaths-1] + "\n";
-        }
+            // textItem.content = allPathsList + "\n" + allPathsList[allPathsList.length-1];
+            }
     }
 
     drawPoints.onMouseDrag = function(event) {
@@ -277,9 +267,11 @@ window.onload = function() {
             if (path.curves[idx - 1].handle2.x == -1) 
                 break;
         }
+        pathIndex = getPathIndex(path);
+        allPathsList[pathIndex] = getPointsFromPath(path); // overwrite existing entry for the path
+        // textItem.content = allPathsList[pathIndex];
         path.fullySelected = false;
         path.selected = true;
-        path.fullySelected = true;
     }
     drawLine.activate(); // begins with the pencil activated
 

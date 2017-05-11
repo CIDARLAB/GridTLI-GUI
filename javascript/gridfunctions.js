@@ -17,56 +17,36 @@ function linspace(a,b,n) {
     return ret;
 }
 
-function changeValues(){
+function getPointsFromPath(path) {
+    pointList = [];
+    for(i = 0; i < path.segments.length; i++) {
+        pointList.push(path.segments[i].point)
+    }
+    return pointList
+}
+
+function getPathIndex(path) {
+    var currentChildren = project.activeLayer.children;
+    for (i = 0; i < currentChildren.length; i++) {
+        if (currentChildren[i] == project.getItems({selected:true})[1]) {
+            path = project.activeLayer.children[i];
+            var pathIndex = i; // will be appended to existing path
+        }
+    }
+    return pathIndex
+}
+
+function changeGraphAxes(){
     grid.removeChildren(); // delete previous grid
 
     // get new grid values:
     var spatialMin = document.getElementById('smin').value;
-    if (isNaN(spatialMin)) {
-        alert("Error! Spatial Mininum must be a number.");
-        spatialMin = -6;
-        spatialMax = 6;
-        spatialThresh = 1;
-    }
     var spatialMax = document.getElementById('smax').value;
-    if (isNaN(spatialMax)) {
-        alert("Error! Spatial Maximum must be a number.");
-        spatialMin = -6;
-        spatialMax = 6;
-        spatialThresh = 1;
-    }
     var spatialThresh = document.getElementById('sThresh').value;
-    if (isNaN(spatialThresh) || (spatialThresh <= 0)) {
-        alert("Error! Spatial Threshold must be a number.");
-        spatialMin = -6;
-        spatialMax = 6;
-        spatialThresh = 1;
-    }
-    if (spatialMax - spatialMin <= 0) {
-        alert("Error! Spatial Minimum must be less than spatialMax.");
-        spatialMin = -6;
-        spatialMax = 6;
-        spatialThresh = 1;
-    }
     nSpatialDivs = Math.ceil((spatialMax - spatialMin) / spatialThresh);
-
+    
     var timeMax = document.getElementById('tmax').value;
-    if (isNaN(timeMax)) {
-        alert("Error! Maximum Time must be a number.");
-        var timeMax = 16;
-        timeThresh = 1;
-    }
     var timeThresh = document.getElementById('tThresh').value;
-    if (isNaN(timeThresh) || (timeThresh <= 0)) {
-        alert("Error! Temporal Threshold must be a number.");
-        var timeMax = 16;
-        timeThresh = 1;
-    }
-    if (timeMax <= 0) {
-        alert("Error! Temporal Max must be greater than 0.");
-        var timeMax = 16;
-        timeThresh = 1;
-    }
     nTimeDivs = Math.ceil(timeMax / timeThresh);
    
     timeValues = linspace(0,timeMax,nTimeDivs + 1)
@@ -142,7 +122,6 @@ function drawGrid(nWide, nTall, xAxisVals, yAxisVals, cnvsSize) {
         }
     }
     return gridGroup; // returns the grid boxes group 
-    cnvs.activate(); // Define active layer:
 }
 
 function colorBoxes(nWide, nTall, cnvsSize, gridGroup, allPaths) {
@@ -175,7 +154,6 @@ function colorBoxes(nWide, nTall, cnvsSize, gridGroup, allPaths) {
     cnvs.activate(); // Define active layer
     }
 
-
 function changePathValues(allPathsList, timeMax, spatialMin, spatialMax) {
     adjustedOutput = []; // initializes as empty array
     // txt.content = 'got through 1';
@@ -192,4 +170,47 @@ function changePathValues(allPathsList, timeMax, spatialMin, spatialMax) {
         }
     }
     return adjustedOutput;
+}
+
+function saveProject(args) {
+	// initialize the variables used in the save data.
+	var the_data, hiddenElement, filename; 
+	var the_json = project.exportJSON(); 
+	var js_string = JSON.stringify(the_json);
+	// convert the JSON object to string using stringify
+	var data = "data:text/json;charset=utf-8," + encodeURIComponent(js_string); 
+	// if there is no filename just call it 'data.json' default filename is
+	// data.json, we may want to add a capability where user choses their own 
+	// filename.
+	filename = args.filename || 'data.json';
+	hiddenElement = document.createElement('a');
+	hiddenElement.setAttribute('href', data);
+	hiddenElement.setAttribute('download', filename);
+	document.body.appendChild(hiddenElement);
+	// the code above converts the json files to a document and 
+	// then creates a link to them that the function then "clicks"
+	// to download the json file.
+	hiddenElement.click(); 
+}
+
+function exportData() {
+    var pathString = [];
+    var hiddenElement;
+    for (i = 0; i < allPathsList.length; i++) {
+        if (i > 0) {
+            pathString[i] = '\n{ ' + i + ': ' + allPathsList[i].join() + ' }';
+        } else {
+            pathString[i] = '{ ' + i + ': ' + allPathsList[i].join() + ' }';
+        }
+    }
+    var data = "data:text/json;charset=utf-8," + encodeURIComponent(pathString); 
+    var filename = 'GridData.json';
+    hiddenElement = document.createElement('a');
+    hiddenElement.setAttribute('href', data);
+	hiddenElement.setAttribute('download', filename);
+	document.body.appendChild(hiddenElement);
+	// the code above converts the json files to a document and 
+	// then creates a link to them that the function then "clicks"
+	// to download the json file.
+	hiddenElement.click(); 
 }
