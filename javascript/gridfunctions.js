@@ -128,31 +128,45 @@ function colorBoxes(nWide, nTall, cnvsSize, gridGroup, allPaths) {
     /* this runs over all the rectangles on the grid and colors
     each box that a line crosses into */
     grid.activate(); // Define active layer:
-
+    
     // define the rectangle sizes from the grid
     var rect_width = (cnvsSize.width - 60) / nWide;
     var rect_height = (cnvsSize.height - 60) / nTall;
-    // define hit test parameters
-    var hitOptions = {
-        segments: false,
-        stroke: false,
-        fill: true,
-        tolerance: 1
-    };
-
+   
     // find the crossing points between the path and the grid lines:
     for (i = 0; i < gridGroup.children.length; i++) {
         gridGroup.children[i].fillColor = null; // for each box, fillColor is removed
+        var crossings = [];
         for (j = 0; j < allPaths.length; j++) {
-            var crossings = allPaths[j].getCrossings(gridGroup.children[i]);
-            if (crossings.length >= 1) {
+            crossings[j] = allPaths[j].getCrossings(gridGroup.children[i]);
+            if (crossings[j].length >= 1) {
                 gridGroup.children[i].fillColor = "#08CA75"; // for each crossing, fillColor is added
                 break; // once it's colored, moves onto next box without performing further checks
             } 
         }
     }
-    cnvs.activate(); // Define active layer
+
+    // for paths with no crossings:
+    for (j = 0; j < allPaths.length; j++) {
+        if (crossings[j].length == 0) {
+             for (i = 0; i < gridGroup.children.length; i++) {
+                if (gridGroup.children[i].fillColor == null) {
+                    current_point = gridGroup.children[i].point; // top left point of the current rectangle
+                    for (k = 0; k < allPaths[j].segments.length; k++) { // for each point on the line
+                        if ((current_point[0] <= allPaths[j].segments[k].point.x) &&
+                        (allPaths[j].segments[k].point.x <= current_point[0] + rect_width) &&
+                        (current_point[1] <= allPaths[j].segments[k].point.y) &&
+                        (allPaths[j].segments[k].point.y <= current_point[1] + rect_height)) {
+                            gridGroup.children[i].fillColor = "#08CA75";
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
+    cnvs.activate(); // Define active layer
+}
 
 function changePathValues(allPathsList, timeMax, spatialMin, spatialMax) {
     adjustedOutput = []; // initializes as empty array
@@ -172,17 +186,19 @@ function changePathValues(allPathsList, timeMax, spatialMin, spatialMax) {
     return adjustedOutput;
 }
 
-function saveProject(args) {
+function saveProject() {
+    // get the filename (default = 'gridProject.json')
+    var filename = prompt("Enter the file name below: ", "gridProject.json")
+    if (!filename.endsWith(".json")) {
+        filename += ".json";
+    }
 	// initialize the variables used in the save data.
 	var the_data, hiddenElement, filename; 
 	var the_json = project.exportJSON(); 
 	var js_string = JSON.stringify(the_json);
 	// convert the JSON object to string using stringify
 	var data = "data:text/json;charset=utf-8," + encodeURIComponent(js_string); 
-	// if there is no filename just call it 'data.json' default filename is
-	// data.json, we may want to add a capability where user choses their own 
-	// filename.
-	filename = args.filename || 'data.json';
+
 	hiddenElement = document.createElement('a');
 	hiddenElement.setAttribute('href', data);
 	hiddenElement.setAttribute('download', filename);
@@ -194,6 +210,11 @@ function saveProject(args) {
 }
 
 function exportData() {
+    // get the filename (default = 'gridData.json')
+    var filename = prompt("Enter the file name below: ", "gridData.json")
+    if (!filename.endsWith(".json")) {
+        filename += ".json";
+    }
     var pathString = [];
     var hiddenElement;
     for (i = 0; i < allPathsList.length; i++) {
@@ -204,7 +225,6 @@ function exportData() {
         }
     }
     var data = "data:text/json;charset=utf-8," + encodeURIComponent(pathString); 
-    var filename = 'GridData.json';
     hiddenElement = document.createElement('a');
     hiddenElement.setAttribute('href', data);
 	hiddenElement.setAttribute('download', filename);

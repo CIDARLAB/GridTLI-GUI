@@ -150,32 +150,35 @@ nav {
 nav ul {
     list-style: none;
     display: inline-block;
-    margin: 82px auto;
+    margin: 80px auto;
 }
 
 nav ul li {
     float: left;
-    line-height: 5px;
+    line-height: 1px;
 }
 
 nav img {
     float: left;
-    margin: 28px 0 0 40px;
+    margin: 28px -186px 0 40px; /* removes right-side offset for other content */
     height: 59px;
     width: 186px;
 }
 
 nav a {
+    display: block;
+    width: 60px;
     color: white;
     text-align: center;
-    padding: 14px 16px;
+    padding: 12px 0px 6px 0px;
     text-decoration: none;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     border: none;
 }
 
 nav a:hover {
-    border-top: 8px solid #08ca75;
+    border-top: 6px solid #08ca75;
+    padding: 6px 0px 6px 0px;
 }
 
 /* FOOTER */

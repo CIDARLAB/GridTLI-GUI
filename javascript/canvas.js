@@ -132,13 +132,17 @@ window.onload = function() {
 
     // When the mouse is released:
     drawLine.onMouseUp = function(event) {
-        cnvs.addChild(path);
+        if (path.length != 0) {
+            cnvs.addChild(path);
         // color the boxes where segments appear
         colorBoxes(nTimeDivs, nSpatialDivs, view.bounds, gridGroup, cnvs.children);
         allPathsList.push(getPointsFromPath(path)); // add new points to the allPathsList
         // for testing:
         // textItem.content = allPathsList + "\n" + allPathsList[allPathsList.length-1];
         // var adjustedOutput = changePathValues(allPathsList, timeMax, spatialMin, spatialMax);
+        } else {
+            path.remove();
+        }
     }
 
 
