@@ -215,16 +215,9 @@ function exportData() {
     if (!filename.endsWith(".json")) {
         filename += ".json";
     }
-    var pathString = [];
     var hiddenElement;
-    for (i = 0; i < allPathsList.length; i++) {
-        if (i > 0) {
-            pathString[i] = '\n{ ' + i + ': ' + allPathsList[i].join() + ' }';
-        } else {
-            pathString[i] = '{ ' + i + ': ' + allPathsList[i].join() + ' }';
-        }
-    }
-    var data = "data:text/json;charset=utf-8," + encodeURIComponent(pathString); 
+    var jsonArray = convertPathsToJSON();
+    var data = "data:text/json;charset=utf-8," + encodeURIComponent(jsonArray); 
     hiddenElement = document.createElement('a');
     hiddenElement.setAttribute('href', data);
 	hiddenElement.setAttribute('download', filename);
@@ -233,4 +226,30 @@ function exportData() {
 	// then creates a link to them that the function then "clicks"
 	// to download the json file.
 	hiddenElement.click(); 
+}
+
+function convertPathsToJSON() {
+    var jsonArray = [];
+    for (i = 0; i < cnvs.children.length; i++) {
+        if (i > 0) {
+            jsonArray[i] = '\n    { ' + i + ': [ ';
+        } else {
+            jsonArray[i] = '    { ' + i + ': [ ';
+        }
+        for (j = 0; j < cnvs.children[i].segments.length; j++) {
+            if (j == 0) {
+                jsonArray[i] += '{ "x": ' + cnvs.children[i].segments[j].point.x + ',\n' +
+                                '             "y": ' + cnvs.children[i].segments[j].point.y + ' },\n';
+            } else if (j == cnvs.children[i].segments.length - 1) {
+                jsonArray[i] += '           { "x": ' + cnvs.children[i].segments[j].point.x + ',\n' +
+                                '             "y": ' + cnvs.children[i].segments[j].point.y + ' }\n';
+            } else {
+                jsonArray[i] += '           { "x": ' + cnvs.children[i].segments[j].point.x + ',\n' +
+                                '             "y": ' + cnvs.children[i].segments[j].point.y + ' },\n';
+            }
+        }
+        jsonArray[i] += '        ]\n    }'
+    }
+    jsonArray = '[\n' + jsonArray + '\n]';
+    return jsonArray;
 }
