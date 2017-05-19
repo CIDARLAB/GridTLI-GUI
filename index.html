@@ -11,6 +11,9 @@
     <script type="text/javascript" src="./javascript/paper-full.js"></script>
 	<!-- load script that defines the canvas -->
 	<script type="text/javascript" src="./javascript/canvas.js"></script>
+	<!-- load jquery -->
+	<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
+
 </head>
 <body>
 	<nav>
@@ -55,6 +58,10 @@
 			<label>
 				<input type="button" name="export" class="btn" value="export" id="export">
 				<img src="./images/icon-export.png" id="export" onClick="exportData()" title="Export Data">
+			</label>
+			<label>
+				<input type="button" name="export" class="btn" value="export" id="export">
+				<img src="./images/icon-export.png" id="export" onClick="getSTL()" title="Get STL">
 			</label>
 		</div>
 		<div id="threshold">

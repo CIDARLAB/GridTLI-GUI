@@ -1,25 +1,25 @@
 function round(value, decimals) {
-  return Number(Math.round(value+'e'+decimals)+'e-'+decimals);
+    return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
 }
 
-function linspace(a,b,n) {
-    if(typeof n === "undefined") {
-        n = Math.max(Math.round(b-a)+1,1);
+function linspace(a, b, n) {
+    if (typeof n === "undefined") {
+        n = Math.max(Math.round(b - a) + 1, 1);
     }
-    if(n<2) {
-        return n===1?[a]:[];
+    if (n < 2) {
+        return n === 1 ? [a] : [];
     }
-    var i,ret = Array(n);
+    var i, ret = Array(n);
     n--;
-    for(i = n;i >= 0;i--) {
-        ret[i] = round((i*b+(n-i)*a)/n, 2);
+    for (i = n; i >= 0; i--) {
+        ret[i] = round((i * b + (n - i) * a) / n, 2);
     }
     return ret;
 }
 
 function getPointsFromPath(path) {
     pointList = [];
-    for(i = 0; i < path.segments.length; i++) {
+    for (i = 0; i < path.segments.length; i++) {
         pointList.push(path.segments[i].point)
     }
     return pointList
@@ -28,7 +28,7 @@ function getPointsFromPath(path) {
 function getPathIndex(path) {
     var currentChildren = project.activeLayer.children;
     for (i = 0; i < currentChildren.length; i++) {
-        if (currentChildren[i] == project.getItems({selected:true})[1]) {
+        if (currentChildren[i] == project.getItems({ selected: true })[1]) {
             path = project.activeLayer.children[i];
             var pathIndex = i; // will be appended to existing path
         }
@@ -36,7 +36,7 @@ function getPathIndex(path) {
     return pathIndex
 }
 
-function changeGraphAxes(){
+function changeGraphAxes() {
     grid.removeChildren(); // delete previous grid
 
     // get new grid values:
@@ -44,13 +44,13 @@ function changeGraphAxes(){
     var spatialMax = document.getElementById('smax').value;
     var spatialThresh = document.getElementById('sThresh').value;
     nSpatialDivs = Math.ceil((spatialMax - spatialMin) / spatialThresh);
-    
+
     var timeMax = document.getElementById('tmax').value;
     var timeThresh = document.getElementById('tThresh').value;
     nTimeDivs = Math.ceil(timeMax / timeThresh);
-   
-    timeValues = linspace(0,timeMax,nTimeDivs + 1)
-    spatialValues = linspace(spatialMin,spatialMax,nSpatialDivs + 1)
+
+    timeValues = linspace(0, timeMax, nTimeDivs + 1)
+    spatialValues = linspace(spatialMin, spatialMax, nSpatialDivs + 1)
     spatialValues.reverse() // grid writes top to bottom, therefore reverse the y-axis values
 
     // draw the new grid
@@ -97,9 +97,9 @@ function drawGrid(nWide, nTall, xAxisVals, yAxisVals, cnvsSize) {
     }
 
     // draw x and y axis lines
-    var bottomLeftPoint = new paper.Point(50 ,cnvsSize.bottom - 50);
+    var bottomLeftPoint = new paper.Point(50, cnvsSize.bottom - 50);
     var topLeftPoint = new paper.Point(50, 10);
-    var bottomRightPoint = new paper.Point(cnvsSize.right - 10,cnvsSize.bottom - 50);
+    var bottomRightPoint = new paper.Point(cnvsSize.right - 10, cnvsSize.bottom - 50);
     var aLine = new paper.Path.Line(bottomLeftPoint, bottomRightPoint)
     aLine.strokeColor = '#000';
     var aLine = new paper.Path.Line(bottomLeftPoint, topLeftPoint)
@@ -114,9 +114,9 @@ function drawGrid(nWide, nTall, xAxisVals, yAxisVals, cnvsSize) {
             var rect = new Path.Rectangle({
                 point: [50 + i * width_per_rect, 10 + j * height_per_rect],
                 size: [width_per_rect, height_per_rect],
-                strokeColor: "#777", 
+                strokeColor: "#777",
                 strokeWidth: ".5",
-                fillColor: null, 
+                fillColor: null,
             });
             gridGroup.addChild(rect);
         }
@@ -128,11 +128,11 @@ function colorBoxes(nWide, nTall, cnvsSize, gridGroup, allPaths) {
     /* this runs over all the rectangles on the grid and colors
     each box that a line crosses into */
     grid.activate(); // Define active layer:
-    
+
     // define the rectangle sizes from the grid
     var rect_width = (cnvsSize.width - 60) / nWide;
     var rect_height = (cnvsSize.height - 60) / nTall;
-   
+
     // find the crossing points between the path and the grid lines:
     for (i = 0; i < gridGroup.children.length; i++) {
         gridGroup.children[i].fillColor = null; // for each box, fillColor is removed
@@ -142,21 +142,21 @@ function colorBoxes(nWide, nTall, cnvsSize, gridGroup, allPaths) {
             if (crossings[j].length >= 1) {
                 gridGroup.children[i].fillColor = "#08CA75"; // for each crossing, fillColor is added
                 break; // once it's colored, moves onto next box without performing further checks
-            } 
+            }
         }
     }
 
     // for paths with no crossings:
     for (j = 0; j < allPaths.length; j++) {
         if (crossings[j].length == 0) {
-             for (i = 0; i < gridGroup.children.length; i++) {
+            for (i = 0; i < gridGroup.children.length; i++) {
                 if (gridGroup.children[i].fillColor == null) {
                     current_point = gridGroup.children[i].point; // top left point of the current rectangle
                     for (k = 0; k < allPaths[j].segments.length; k++) { // for each point on the line
                         if ((current_point[0] <= allPaths[j].segments[k].point.x) &&
-                        (allPaths[j].segments[k].point.x <= current_point[0] + rect_width) &&
-                        (current_point[1] <= allPaths[j].segments[k].point.y) &&
-                        (allPaths[j].segments[k].point.y <= current_point[1] + rect_height)) {
+                            (allPaths[j].segments[k].point.x <= current_point[0] + rect_width) &&
+                            (current_point[1] <= allPaths[j].segments[k].point.y) &&
+                            (allPaths[j].segments[k].point.y <= current_point[1] + rect_height)) {
                             gridGroup.children[i].fillColor = "#08CA75";
                             break;
                         }
@@ -175,7 +175,7 @@ function changePathValues(allPathsList, timeMax, spatialMin, spatialMax) {
         adjustedOutput[i] = []; // initializes an empty subarray
         // txt.content = "got through 2";
         for (j = 0; j < allPathsList[i].length; j++) { // for all pairs in the current path
-            if (j%2 == 0) {
+            if (j % 2 == 0) {
                 adjustedOutput[i].push((allPathsList[i][j] - 50) * timeMax / 650);
             } else {
                 adjustedOutput[i].push(((460 - allPathsList[i][j]) * (spatialMax - spatialMin) / 450) + spatialMin);
@@ -192,21 +192,21 @@ function saveProject() {
     if (!filename.endsWith(".json")) {
         filename += ".json";
     }
-	// initialize the variables used in the save data.
-	var the_data, hiddenElement, filename; 
-	var the_json = project.exportJSON(); 
-	var js_string = JSON.stringify(the_json);
-	// convert the JSON object to string using stringify
-	var data = "data:text/json;charset=utf-8," + encodeURIComponent(js_string); 
+    // initialize the variables used in the save data.
+    var the_data, hiddenElement, filename;
+    var the_json = project.exportJSON();
+    var js_string = JSON.stringify(the_json);
+    // convert the JSON object to string using stringify
+    var data = "data:text/json;charset=utf-8," + encodeURIComponent(js_string);
 
-	hiddenElement = document.createElement('a');
-	hiddenElement.setAttribute('href', data);
-	hiddenElement.setAttribute('download', filename);
-	document.body.appendChild(hiddenElement);
-	// the code above converts the json files to a document and 
-	// then creates a link to them that the function then "clicks"
-	// to download the json file.
-	hiddenElement.click(); 
+    hiddenElement = document.createElement('a');
+    hiddenElement.setAttribute('href', data);
+    hiddenElement.setAttribute('download', filename);
+    document.body.appendChild(hiddenElement);
+    // the code above converts the json files to a document and 
+    // then creates a link to them that the function then "clicks"
+    // to download the json file.
+    hiddenElement.click();
 }
 
 function exportData() {
@@ -217,39 +217,51 @@ function exportData() {
     }
     var hiddenElement;
     var jsonArray = convertPathsToJSON();
-    var data = "data:text/json;charset=utf-8," + encodeURIComponent(jsonArray); 
+    var data = "data:text/json;charset=utf-8," + encodeURIComponent(jsonArray);
     hiddenElement = document.createElement('a');
     hiddenElement.setAttribute('href', data);
-	hiddenElement.setAttribute('download', filename);
-	document.body.appendChild(hiddenElement);
-	// the code above converts the json files to a document and 
-	// then creates a link to them that the function then "clicks"
-	// to download the json file.
-	hiddenElement.click(); 
+    hiddenElement.setAttribute('download', filename);
+    document.body.appendChild(hiddenElement);
+    // the code above converts the json files to a document and 
+    // then creates a link to them that the function then "clicks"
+    // to download the json file.
+    hiddenElement.click();
+}
+
+function getSTL() {
+    // get the filename (default = 'gridData.json')
+    var jsonArray = convertPathsToJSON();
+     $.ajax({
+        url: "getSTL",
+        type: "POST",
+        data: {
+            "bar":"foo",
+            "signals": JSON.stringify(jsonArray)
+        },
+        success: function (response) {
+            alert('got something back!');
+        },
+        error: function () {
+            alert("ERROR!!");
+        }
+    });
+
 }
 
 function convertPathsToJSON() {
     var jsonArray = [];
     for (i = 0; i < cnvs.children.length; i++) {
-        if (i > 0) {
-            jsonArray[i] = '\n    { ' + i + ': [ ';
-        } else {
-            jsonArray[i] = '    { ' + i + ': [ ';
-        }
+        //var signalMap = {};     
+        var signal = [];
         for (j = 0; j < cnvs.children[i].segments.length; j++) {
-            if (j == 0) {
-                jsonArray[i] += '{ "x": ' + cnvs.children[i].segments[j].point.x + ',\n' +
-                                '             "y": ' + cnvs.children[i].segments[j].point.y + ' },\n';
-            } else if (j == cnvs.children[i].segments.length - 1) {
-                jsonArray[i] += '           { "x": ' + cnvs.children[i].segments[j].point.x + ',\n' +
-                                '             "y": ' + cnvs.children[i].segments[j].point.y + ' }\n';
-            } else {
-                jsonArray[i] += '           { "x": ' + cnvs.children[i].segments[j].point.x + ',\n' +
-                                '             "y": ' + cnvs.children[i].segments[j].point.y + ' },\n';
-            }
+            var map = {};
+            map["x"] = cnvs.children[i].segments[j].point.x;
+            map["y"] = cnvs.children[i].segments[j].point.y;
+            signal.push(map);
         }
-        jsonArray[i] += '        ]\n    }'
+        //signalMap[i] = signal;
+        jsonArray.push(signal);  
     }
-    jsonArray = '[\n' + jsonArray + '\n]';
+
     return jsonArray;
 }
