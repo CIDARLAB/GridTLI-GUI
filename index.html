@@ -2,10 +2,11 @@
 <html>
 <head>
 	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>GridTLI GUI</title>
 	<!-- load script that controls grid functions -->
 	<script type="text/javascript" src="./javascript/gridfunctions.js"></script>
-	<!-- load custom stylesheet -->
+	 <!--load custom stylesheet -->
     <link rel="stylesheet" href="./styles/style.css"></link>
 	<!-- load paper.js -->
     <script type="text/javascript" src="./javascript/paper-full.js"></script>
@@ -13,7 +14,14 @@
 	<script type="text/javascript" src="./javascript/canvas.js"></script>
 	<!-- load jquery -->
 	<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
-
+	<!-- load bootstrap javascript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" 
+		integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" 
+		crossorigin="anonymous"></script>
+	<!-- load bootstrap css -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+		integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+		crossorigin="anonymous">
 </head>
 <body>
 	<nav>
@@ -23,105 +31,101 @@
 			<li><a href="#">STL</a></li>
 		</ul>
 	</nav>
-	<div class="tab">
-		<article id="drawingGrid">
-			<canvas id="myCanvas"></canvas>
-			<p class="rotate" id="axisLabel">Spatial Magnitude</p>
-		</article>
-		<div class="tools">
-			<label>
-				<input type="radio" name="tool" class="btn" value="select" id="select">
-				<img src="./images/icons/icon-mouse.png" id="select" onClick="selectLine.activate()" title="Select">
-			</label>
-			<label>
-				<input type="radio" name="tool" class="btn" value="pencil" id="pencil" checked>
-				<img src="./images/icons/icon-pencil.png" id="pencil" onClick="drawLine.activate()" title="Draw">
-			</label>	
-
-			<label>
-				<input type="radio" name="tool" class="btn" value="segment" id="segment">
-				<img src="./images/icons/icon-segment.png" id="dot" onClick="drawPoints.activate()" title="Point">
-			</label>
-
-			<label>
-				<input type="radio" name="tool" class="btn" value="eraser" id="eraser">
-				<img src="./images/icons/icon-eraser.png" id="eraser" onClick="deleteLine.activate()" title="Erase">
-			</label>
-			<label>
-				<input type="radio" name="tool" class="btn" value="move" id="move">
-				<img src="./images/icons/icon-move.png" id="move" onClick="movePoints.activate()" title="Move">
-			</label>
-			<label>
-				<input type="button" name="save" class="btn" value="save" id="save">
-				<img src="./images/icons/icon-save.png" id="save" onClick='saveProject({ filename: "data.json" });' title="Save Project">
-			</label>
-			<label>
-				<input type="button" name="export" class="btn" value="export" id="export">
-				<img src="./images/icons/icon-export.png" id="export" onClick="exportData()" title="Export Data">
-			</label>
-			<label>
-				<input type="button" name="export" class="btn" value="export" id="export">
-				<img src="./images/icons/icon-export.png" id="export" onClick="getSTL()" title="Get STL">
-			</label>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-4">
+				<div class="btn-group">
+					<button type="button" class="btn btn-default">
+						<span class="glyphicon glyphicon-hand-up"></span>
+					</button>
+					<button type="button" class="btn btn-default">
+						<span class="glyphicon glyphicon-pencil"></span>
+					</button>
+					<button type="button" class="btn btn-default">
+						<span class="glyphicon glyphicon-option-horizontal"></span>
+					</button>
+					<button type="button" class="btn btn-default">
+						<span class="glyphicon glyphicon-erase"></span>
+					</button>
+					<button type="button" class="btn btn-default">
+						<span class="glyphicon glyphicon-move"></span>
+					</button>
+				</div>
+				<div class="btn-group">
+					<button type="button" class="btn btn-default">
+						<span class="glyphicon glyphicon-floppy-save"></span>
+					</button>
+					<button type="button" class="btn btn-default">
+						<span class="glyphicon glyphicon-download-alt"></span>
+					</button>
+				</div>
+				<div id="threshold">
+					<h3>Graph Values</h3>
+					<article class="spatial">
+						<article class="graphLabels">
+							<p>Spatial:</p>
+						</article>
+						<article class="graphValues">
+							<input type="text" id="smin" value="X_min"
+								onblur="if (this.value == '') {this.value = 'X_min';}"
+								onfocus="if (this.value == 'X_min') {this.value = '';}" />
+							<br>
+							<input type="text" id="smax" value="X_max"
+								onblur="if (this.value == '') {this.value = 'X_max';}"
+								onfocus="if (this.value == 'X_max') {this.value = '';}" />
+						</article>
+					</article>
+					<article class="temporal">
+						<article class="graphLabels">
+							<p>Temporal:</p>
+						</article>
+						<article class="graphValues">
+							<input type="text" id="tmax" value="Y_max"
+								onblur="if (this.value == '') {this.value = 'Y_max';}"
+								onfocus="if (this.value == 'Y_max') {this.value = '';}" />
+						</article>
+					</article>
+					<h3 class="thresh">Threshold Values</h3>
+					<article class="spatial">
+						<article class="threshLabels">
+							<p>Spatial:</p>
+						</article>
+						<article class="threshValues">
+							<input type="text" id="sThresh" value="Xt"
+								onblur="if (this.value == '') {this.value = 'Xt';}"
+								onfocus="if (this.value == 'Xt') {this.value = '';}" />
+						</article>
+					</article>
+					<article class="temporal">
+						<article class="threshLabels">
+							<p>Temporal:</p>
+						</article>
+						<article class="threshValues">
+							<input type="text" id="tThresh" value="Yt"
+								onblur="if (this.value == '') {this.value = 'Yt';}"
+								onfocus="if (this.value == 'Yt') {this.value = '';}" />
+						</article>
+					</article>
+					<article class="cluster">
+						<article class="threshLabels">
+							<p>Cluster:</p>
+						</article>
+						<article class="threshValues">
+							<input type="text" id="cluster" value="Ct"
+								onblur="if (this.value == '') {this.value = 'Ct';}"
+								onfocus="if (this.value == 'Ct') {this.value = '';}" />
+						</article>
+					</article>
+					<button type="button" id="changeVals" onClick="changeGraphAxes()">ReDraw</button>
+				</div>
+			</div>
+			<article id="drawingGrid">
+				<canvas id="myCanvas"></canvas>
+				<p class="rotate" id="axisLabel">Spatial Magnitude</p>
+			</article>
 		</div>
-		<div id="threshold">
-			<h3>Graph Values</h3>
-			<article class="spatial">
-				<article class="graphLabels">
-					<p>Spatial:</p>
-				</article>
-				<article class="graphValues">
-					<input type="text" id="smin" value="X_min"
-						onblur="if (this.value == '') {this.value = 'X_min';}"
-						onfocus="if (this.value == 'X_min') {this.value = '';}" />
-					<br>
-					<input type="text" id="smax" value="X_max"
-						onblur="if (this.value == '') {this.value = 'X_max';}"
-						onfocus="if (this.value == 'X_max') {this.value = '';}" />
-				</article>
-			</article>
-			<article class="temporal">
-				<article class="graphLabels">
-					<p>Temporal:</p>
-				</article>
-				<article class="graphValues">
-					<input type="text" id="tmax" value="Y_max"
-						onblur="if (this.value == '') {this.value = 'Y_max';}"
-						onfocus="if (this.value == 'Y_max') {this.value = '';}" />
-				</article>
-			</article>
-			<h3 class="thresh">Threshold Values</h3>
-			<article class="spatial">
-				<article class="threshLabels">
-					<p>Spatial:</p>
-				</article>
-				<article class="threshValues">
-					<input type="text" id="sThresh" value="Xt"
-						onblur="if (this.value == '') {this.value = 'Xt';}"
-						onfocus="if (this.value == 'Xt') {this.value = '';}" />
-				</article>
-			</article>
-			<article class="temporal">
-				<article class="threshLabels">
-					<p>Temporal:</p>
-				</article>
-				<article class="threshValues">
-					<input type="text" id="tThresh" value="Yt"
-						onblur="if (this.value == '') {this.value = 'Yt';}"
-						onfocus="if (this.value == 'Yt') {this.value = '';}" />
-				</article>
-			</article>
-			<article class="cluster">
-				<article class="threshLabels">
-					<p>Cluster:</p>
-				</article>
-				<article class="threshValues">
-					<input type="text" id="cluster" value="Ct"
-						onblur="if (this.value == '') {this.value = 'Ct';}"
-						onfocus="if (this.value == 'Ct') {this.value = '';}" />
-				</article>
-			</article>
-			<button type="button" id="changeVals" onClick="changeGraphAxes()">Run</button>
+		<div class="row">
+			<button type="button" id="getSTL" onClick="getSTL()" title="Get STL">Get STL</button>
 		</div>
 	</div>
 	<div class="footer">

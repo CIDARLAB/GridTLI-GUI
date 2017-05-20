@@ -150,7 +150,7 @@ function colorBoxes(nWide, nTall, cnvsSize, gridGroup, allPaths) {
     for (j = 0; j < allPaths.length; j++) {
         if (crossings[j].length == 0) {
             for (i = 0; i < gridGroup.children.length; i++) {
-                if (gridGroup.children[i].fillColor == null) {
+                if (gridGroup.children[i].fillColor == null) { // only checks uncolored boxes
                     current_point = gridGroup.children[i].point; // top left point of the current rectangle
                     for (k = 0; k < allPaths[j].segments.length; k++) { // for each point on the line
                         if ((current_point[0] <= allPaths[j].segments[k].point.x) &&
@@ -168,24 +168,6 @@ function colorBoxes(nWide, nTall, cnvsSize, gridGroup, allPaths) {
     cnvs.activate(); // Define active layer
 }
 
-function changePathValues(allPathsList, timeMax, spatialMin, spatialMax) {
-    adjustedOutput = []; // initializes as empty array
-    // txt.content = 'got through 1';
-    for (i = 0; i < allPathsList.length; i++) { // for all the paths
-        adjustedOutput[i] = []; // initializes an empty subarray
-        // txt.content = "got through 2";
-        for (j = 0; j < allPathsList[i].length; j++) { // for all pairs in the current path
-            if (j % 2 == 0) {
-                adjustedOutput[i].push((allPathsList[i][j] - 50) * timeMax / 650);
-            } else {
-                adjustedOutput[i].push(((460 - allPathsList[i][j]) * (spatialMax - spatialMin) / 450) + spatialMin);
-            }
-            // txt.content = "got through 3 or 4...";
-        }
-    }
-    return adjustedOutput;
-}
-
 function saveProject() {
     // get the filename (default = 'gridProject.json')
     var filename = prompt("Enter the file name below: ", "gridProject.json")
@@ -193,20 +175,9 @@ function saveProject() {
         filename += ".json";
     }
     // initialize the variables used in the save data.
-    var the_data, hiddenElement, filename;
+    var the_data;
     var the_json = project.exportJSON();
-    var js_string = JSON.stringify(the_json);
-    // convert the JSON object to string using stringify
-    var data = "data:text/json;charset=utf-8," + encodeURIComponent(js_string);
-
-    hiddenElement = document.createElement('a');
-    hiddenElement.setAttribute('href', data);
-    hiddenElement.setAttribute('download', filename);
-    document.body.appendChild(hiddenElement);
-    // the code above converts the json files to a document and 
-    // then creates a link to them that the function then "clicks"
-    // to download the json file.
-    hiddenElement.click();
+    encodeJSON(the_json, filename);
 }
 
 function exportData() {
@@ -215,17 +186,8 @@ function exportData() {
     if (!filename.endsWith(".json")) {
         filename += ".json";
     }
-    var hiddenElement;
     var jsonArray = convertPathsToJSON();
-    var data = "data:text/json;charset=utf-8," + encodeURIComponent(jsonArray);
-    hiddenElement = document.createElement('a');
-    hiddenElement.setAttribute('href', data);
-    hiddenElement.setAttribute('download', filename);
-    document.body.appendChild(hiddenElement);
-    // the code above converts the json files to a document and 
-    // then creates a link to them that the function then "clicks"
-    // to download the json file.
-    hiddenElement.click();
+    encodeJSON(jsonArray, filename);
 }
 
 function getSTL() {
@@ -240,12 +202,25 @@ function getSTL() {
         },
         success: function (response) {
             alert('got something back!');
+            filename = "gotit.json";
+            encodeJSON(response, filename);
         },
         error: function () {
             alert("ERROR!!");
         }
     });
+}
 
+function encodeJSON(result, filename) {
+    // converts result/response file to a document and "clicks" to download
+    var result_string = JSON.stringify(result);
+    var hiddenElement;
+    var data = "data:text/json;charset=utf-8," + encodeURIComponent(result_string);
+    hiddenElement = document.createElement('a');
+    hiddenElement.setAttribute('href', data);
+    hiddenElement.setAttribute('download', filename);
+    document.body.appendChild(hiddenElement);
+    hiddenElement.click();
 }
 
 function convertPathsToJSON() {
@@ -254,14 +229,21 @@ function convertPathsToJSON() {
         //var signalMap = {};     
         var signal = [];
         for (j = 0; j < cnvs.children[i].segments.length; j++) {
+            var adjustedPair = changeCoordinateValues(cnvs.children[i].segments[j]);
             var map = {};
-            map["x"] = cnvs.children[i].segments[j].point.x;
-            map["y"] = cnvs.children[i].segments[j].point.y;
+            map["x"] = adjustedPair.x;
+            map["y"] = adjustedPair.y;
             signal.push(map);
         }
         //signalMap[i] = signal;
         jsonArray.push(signal);  
     }
-
     return jsonArray;
+}
+
+function changeCoordinateValues(currentPath) {
+    var adjustedPair = {}; // initializes as empty array
+    adjustedPair["x"] = (currentPath.point.x - 50) * timeMax / 650;
+    adjustedPair["y"] = ((460 - currentPath.point.y) * (spatialMax - spatialMin) / 450) + spatialMin;
+    return adjustedPair;
 }
