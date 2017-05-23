@@ -193,6 +193,7 @@ function exportData() {
 function getSTL() {
     // get the filename (default = 'gridData.json')
     var jsonArray = convertPathsToJSON();
+    
      $.ajax({
         url: "getSTL",
         type: "POST",
@@ -206,10 +207,10 @@ function getSTL() {
         },
         success: function (response) {
             filename = "stl.txt";
-            encodeJSON(response, filename);
+            writeSTL(response, filename);
         },
         error: function () {
-            alert("ERROR!!");
+            console.log("ERROR!!");
         }
     });
 }
@@ -219,6 +220,17 @@ function encodeJSON(result, filename) {
     var result_string = JSON.stringify(result);
     var hiddenElement;
     var data = "data:text/json;charset=utf-8," + encodeURIComponent(result_string);
+    hiddenElement = document.createElement('a');
+    hiddenElement.setAttribute('href', data);
+    hiddenElement.setAttribute('download', filename);
+    document.body.appendChild(hiddenElement);
+    hiddenElement.click();
+}
+
+function writeSTL(result, filename) {
+    // converts result/response file to a document and "clicks" to download
+    var hiddenElement;
+    var data = "data:text/json;charset=utf-8," + encodeURIComponent(result);
     hiddenElement = document.createElement('a');
     hiddenElement.setAttribute('href', data);
     hiddenElement.setAttribute('download', filename);
