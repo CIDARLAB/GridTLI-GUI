@@ -6,8 +6,6 @@
     <title>GridTLI GUI</title>
 	<!-- load script that controls grid functions -->
 	<script type="text/javascript" src="./javascript/gridfunctions.js"></script>
-	 <!--load custom stylesheet -->
-    <link rel="stylesheet" href="./styles/style.css"></link>
 	<!-- load paper.js -->
     <script type="text/javascript" src="./javascript/paper-full.js"></script>
 	<!-- load script that defines the canvas -->
@@ -22,40 +20,46 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
 		integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
 		crossorigin="anonymous">
+	<!--load custom stylesheet -->
+    <link rel="stylesheet" href="./styles/style.css"></link>
 </head>
 <body>
-	<nav>
-		<img src="./images/logo/phoenix_banner.png">
-		<ul>
-			<li><a href="#">Home</a></li>
-			<li><a href="#">STL</a></li>
-		</ul>
+	<nav class="navbar navbar-inverse">
+		<div class="container-fluid">
+    		<div class="navbar-header">
+				<img src="./images/logo/phoenix_banner.png" class="navbar-left">
+    		</div>
+			<ul class="nav navbar-nav">
+				<li><a href="#">Home</a></li>
+				<li><a href="#">STL</a></li>
+			</ul>
+		</div>
 	</nav>
-	<div class="container">
+	<div class="container" id="tab">
 		<div class="row">
-			<div class="col-md-4">
+			<div class="col-4 col-md-4">
 				<div class="btn-group">
-					<button type="button" class="btn btn-default">
+					<button type="button" class="btn btn-default" onClick="selectLine.activate()" title="Select">
 						<span class="glyphicon glyphicon-hand-up"></span>
 					</button>
-					<button type="button" class="btn btn-default">
+					<button type="button" class="btn btn-default" onClick="drawLine.activate()" title="Draw">
 						<span class="glyphicon glyphicon-pencil"></span>
 					</button>
-					<button type="button" class="btn btn-default">
+					<button type="button" class="btn btn-default" onClick="drawPoints.activate()" title="Point">
 						<span class="glyphicon glyphicon-option-horizontal"></span>
 					</button>
-					<button type="button" class="btn btn-default">
+					<button type="button" class="btn btn-default" onClick="deleteLine.activate()" title="Erase">
 						<span class="glyphicon glyphicon-erase"></span>
 					</button>
-					<button type="button" class="btn btn-default">
+					<button type="button" class="btn btn-default" onClick="movePoints.activate()" title="Move">
 						<span class="glyphicon glyphicon-move"></span>
 					</button>
 				</div>
 				<div class="btn-group">
-					<button type="button" class="btn btn-default">
+					<button type="button" class="btn btn-default" onClick="saveProject()" title="Save Project">
 						<span class="glyphicon glyphicon-floppy-save"></span>
 					</button>
-					<button type="button" class="btn btn-default">
+					<button type="button" class="btn btn-default" onClick="exportData()" title="Export Data">
 						<span class="glyphicon glyphicon-download-alt"></span>
 					</button>
 				</div>
@@ -119,22 +123,24 @@
 					<button type="button" id="changeVals" onClick="changeGraphAxes()">ReDraw</button>
 				</div>
 			</div>
-			<article id="drawingGrid">
-				<canvas id="myCanvas"></canvas>
-				<p class="rotate" id="axisLabel">Spatial Magnitude</p>
-			</article>
+			<div class="col col-md-8">
+				<article class="drawingGrid">
+					<canvas id="myCanvas"></canvas>
+					<p class="rotate" id="axisLabel">Spatial Magnitude</p>
+				</article>
+			</div>
 		</div>
 		<div class="row">
 			<button type="button" id="getSTL" onClick="getSTL()" title="Get STL">Get STL</button>
 		</div>
 	</div>
-	<div class="footer">
+	<!--<div class="footer">
 		<a href="http://cidarlab.org/" target="_blank">
 			<img src="./images/logo/cidar_s.png" alt="CIDAR Lab" style="width:142px">
 		</a>
 		<a href="http://www.bu.edu" target="_blank">
 			<img src="./images/logo/bu.png" alt="BU.EDU">
 		</a>
-	</div>
+	</div>-->
 </body>
 </html>
