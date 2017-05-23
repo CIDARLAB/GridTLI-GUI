@@ -236,10 +236,14 @@ function getSTL() {
         type: "POST",
         data: {
             "bar":"foo",
-            "signals": JSON.stringify(jsonArray)
+            "signals": JSON.stringify(jsonArray), 
+            "xt":document.getElementById('sThresh').value,
+            "tt":document.getElementById('tThresh').value,
+            "ct":document.getElementById('cThresh').value
+
         },
         success: function (response) {
-            alert('got something back!');
+            console.log(response);
         },
         error: function () {
             alert("ERROR!!");
