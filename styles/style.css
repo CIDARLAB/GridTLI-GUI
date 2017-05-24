@@ -64,3 +64,11 @@ canvas {
     /* Internet Explorer */
     filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 }
+
+.container .row,
+.container .col,
+.container .col.col-md-8
+.container .col-4,
+.container .col-8 {
+    border: 1px solid lightgray;
+}

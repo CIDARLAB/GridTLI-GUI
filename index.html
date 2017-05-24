@@ -37,93 +37,102 @@
 	</nav>
 	<div class="container" id="tab">
 		<div class="row">
-			<div class="col-4 col-md-4">
-				<div class="btn-group">
-					<button type="button" class="btn btn-default" onClick="selectLine.activate()" title="Select">
-						<span class="glyphicon glyphicon-hand-up"></span>
-					</button>
-					<button type="button" class="btn btn-default" onClick="drawLine.activate()" title="Draw">
-						<span class="glyphicon glyphicon-pencil"></span>
-					</button>
-					<button type="button" class="btn btn-default" onClick="drawPoints.activate()" title="Point">
-						<span class="glyphicon glyphicon-option-horizontal"></span>
-					</button>
-					<button type="button" class="btn btn-default" onClick="deleteLine.activate()" title="Erase">
-						<span class="glyphicon glyphicon-erase"></span>
-					</button>
-					<button type="button" class="btn btn-default" onClick="movePoints.activate()" title="Move">
-						<span class="glyphicon glyphicon-move"></span>
-					</button>
+			<div class="col-4 col-md-3">
+				<div class="row">
+					<div class="btn-group">
+						<button type="button" class="btn btn-default" onClick="selectLine.activate()" title="Select">
+							<span class="glyphicon glyphicon-hand-up"></span>
+						</button>
+						<button type="button" class="btn btn-default" onClick="drawLine.activate()" title="Draw">
+							<span class="glyphicon glyphicon-pencil"></span>
+						</button>
+						<button type="button" class="btn btn-default" onClick="drawPoints.activate()" title="Point">
+							<span class="glyphicon glyphicon-option-horizontal"></span>
+						</button>
+						<button type="button" class="btn btn-default" onClick="deleteLine.activate()" title="Erase">
+							<span class="glyphicon glyphicon-erase"></span>
+						</button>
+						<button type="button" class="btn btn-default" onClick="movePoints.activate()" title="Move">
+							<span class="glyphicon glyphicon-move"></span>
+						</button>
+					</div>
+					<div class="btn-group">
+						<button type="button" class="btn btn-default" onClick="saveProject()" title="Save Project">
+							<span class="glyphicon glyphicon-floppy-save"></span>
+						</button>
+						<button type="button" class="btn btn-default" onClick="exportData()" title="Export Data">
+							<span class="glyphicon glyphicon-download-alt"></span>
+						</button>
+					</div>
 				</div>
-				<div class="btn-group">
-					<button type="button" class="btn btn-default" onClick="saveProject()" title="Save Project">
-						<span class="glyphicon glyphicon-floppy-save"></span>
-					</button>
-					<button type="button" class="btn btn-default" onClick="exportData()" title="Export Data">
-						<span class="glyphicon glyphicon-download-alt"></span>
-					</button>
+				<div class="row">
+					<h4>Axis Values</h4>
 				</div>
-				<div id="threshold">
-					<h3>Graph Values</h3>
-					<article class="spatial">
-						<article class="graphLabels">
-							<p>Spatial:</p>
-						</article>
-						<article class="graphValues">
-							<input type="text" id="smin" value="X_min"
+				<div class="row justify-content-center">
+					<div class="col-6 col-md-4 align-self-center" style="background-color:yellow;">
+						<p>Spatial:</p>
+					</div>
+					<div class="col-6 col-md-4">
+						<div class="row">
+							<input type="text" class="form-control" id="smin" value="X_min"
 								onblur="if (this.value == '') {this.value = 'X_min';}"
 								onfocus="if (this.value == 'X_min') {this.value = '';}" />
-							<br>
-							<input type="text" id="smax" value="X_max"
+						</div>
+						<div class="row">
+							<input type="text" class="form-control"id="smax" value="X_max"
 								onblur="if (this.value == '') {this.value = 'X_max';}"
 								onfocus="if (this.value == 'X_max') {this.value = '';}" />
-						</article>
-					</article>
-					<article class="temporal">
-						<article class="graphLabels">
-							<p>Temporal:</p>
-						</article>
-						<article class="graphValues">
-							<input type="text" id="tmax" value="Y_max"
-								onblur="if (this.value == '') {this.value = 'Y_max';}"
-								onfocus="if (this.value == 'Y_max') {this.value = '';}" />
-						</article>
-					</article>
-					<h3 class="thresh">Threshold Values</h3>
-					<article class="spatial">
-						<article class="threshLabels">
-							<p>Spatial:</p>
-						</article>
-						<article class="threshValues">
-							<input type="text" id="sThresh" value="Xt"
-								onblur="if (this.value == '') {this.value = 'Xt';}"
-								onfocus="if (this.value == 'Xt') {this.value = '';}" />
-						</article>
-					</article>
-					<article class="temporal">
-						<article class="threshLabels">
-							<p>Temporal:</p>
-						</article>
-						<article class="threshValues">
-							<input type="text" id="tThresh" value="Yt"
-								onblur="if (this.value == '') {this.value = 'Yt';}"
-								onfocus="if (this.value == 'Yt') {this.value = '';}" />
-						</article>
-					</article>
-					<article class="cluster">
-						<article class="threshLabels">
-							<p>Cluster:</p>
-						</article>
-						<article class="threshValues">
-							<input type="text" id="cThresh" value="Ct"
-								onblur="if (this.value == '') {this.value = 'Ct';}"
-								onfocus="if (this.value == 'Ct') {this.value = '';}" />
-						</article>
-					</article>
-					<button type="button" id="changeVals" onClick="changeGraphAxes()">ReDraw</button>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-6 col-md-4">
+						<p>Temporal:</p>
+					</div>
+					<div class="col-6 col-md-5">
+						<input type="text" class="form-control"id="tmax" value="Y_max"
+							onblur="if (this.value == '') {this.value = 'Y_max';}"
+							onfocus="if (this.value == 'Y_max') {this.value = '';}" />
+					</div>
+				</div>
+				<div class="row">
+					<h4>Threshold Values</h4>
+				</div>
+				<div class="row">
+					<div class="col-6 col-md-4">
+						<p>Spatial:</p>
+					</div>
+					<div class="col-6 col-md-5">
+						<input type="text" class="form-control" id="sThresh" value="Xt"
+							onblur="if (this.value == '') {this.value = 'Xt';}"
+							onfocus="if (this.value == 'Xt') {this.value = '';}" />
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-6 col-md-4">
+						<p>Temporal:</p>
+					</div>
+					<div class="col-6 col-md-5">
+						<input type="text" class="form-control" id="tThresh" value="Yt"
+							onblur="if (this.value == '') {this.value = 'Yt';}"
+							onfocus="if (this.value == 'Yt') {this.value = '';}" />
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-6 col-md-4">
+						<p>Cluster:</p>
+					</div>
+					<div class="col-6 col-md-5">
+						<input type="text" class="form-control" id="cThresh" value="Ct"
+							onblur="if (this.value == '') {this.value = 'Ct';}"
+							onfocus="if (this.value == 'Ct') {this.value = '';}" />
+					</div>
+				</div>
+				<div class="row">
+					<button type="button" class="btn btn-default" id="changeVals" onClick="changeGraphAxes()">ReDraw</button>
 				</div>
 			</div>
-			<div class="col col-md-8">
+			<div class="col col-md-9">
 				<article class="drawingGrid">
 					<canvas id="myCanvas"></canvas>
 					<p class="rotate" id="axisLabel">Spatial Magnitude</p>
@@ -131,7 +140,7 @@
 			</div>
 		</div>
 		<div class="row">
-			<button type="button" id="getSTL" onClick="getSTL()" title="Get STL">Get STL</button>
+			<button type="button" class="btn btn-default" id="getSTL" onClick="getSTL()" title="Get STL">Get STL</button>
 		</div>
 	</div>
 	<!--<div class="footer">
