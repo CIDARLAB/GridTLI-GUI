@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  	<meta name="viewport" content="width=device-width, initial-scale=1">
     <title>GridTLI GUI</title>
 	<!-- load script that controls grid functions -->
 	<script type="text/javascript" src="./javascript/gridfunctions.js"></script>
@@ -36,10 +36,10 @@
 		</div>
 	</nav>
 	<div class="container" id="tab">
-		<div class="row">
-			<div class="col-4 col-md-3">
+		<div class="row" id="tab">
+			<div class="col-xs-3">
 				<div class="row">
-					<div class="btn-group">
+					<div class="btn-group pull-left">
 						<button type="button" class="btn btn-default" onClick="selectLine.activate()" title="Select">
 							<span class="glyphicon glyphicon-hand-up"></span>
 						</button>
@@ -56,7 +56,7 @@
 							<span class="glyphicon glyphicon-move"></span>
 						</button>
 					</div>
-					<div class="btn-group">
+					<div class="btn-group pull-right">
 						<button type="button" class="btn btn-default" onClick="saveProject()" title="Save Project">
 							<span class="glyphicon glyphicon-floppy-save"></span>
 						</button>
@@ -68,29 +68,33 @@
 				<div class="row">
 					<h4>Axis Values</h4>
 				</div>
-				<div class="row justify-content-center">
-					<div class="col-6 col-md-4 align-self-center" style="background-color:yellow;">
+				<div class="row flex">
+					<div class="col col-xs-6">
 						<p>Spatial:</p>
 					</div>
-					<div class="col-6 col-md-4">
-						<div class="row">
-							<input type="text" class="form-control" id="smin" value="X_min"
-								onblur="if (this.value == '') {this.value = 'X_min';}"
-								onfocus="if (this.value == 'X_min') {this.value = '';}" />
+					<div class="col col-xs-6">
+						<div class="row flex">
+							<div class="col col-xs-12">
+								<input type="text" class="form-control" id="smin" value="X_min"
+									onblur="if (this.value == '') {this.value = 'X_min';}"
+									onfocus="if (this.value == 'X_min') {this.value = '';}" />
+							</div>
 						</div>
-						<div class="row">
-							<input type="text" class="form-control"id="smax" value="X_max"
-								onblur="if (this.value == '') {this.value = 'X_max';}"
-								onfocus="if (this.value == 'X_max') {this.value = '';}" />
+						<div class="row flex">
+							<div class="col col-xs-12">
+								<input type="text" class="form-control"id="smax" value="X_max"
+									onblur="if (this.value == '') {this.value = 'X_max';}"
+									onfocus="if (this.value == 'X_max') {this.value = '';}" />
+							</div>
 						</div>
 					</div>
 				</div>
-				<div class="row">
-					<div class="col-6 col-md-4">
+				<div class="row flex">
+					<div class="col col-xs-6">
 						<p>Temporal:</p>
 					</div>
-					<div class="col-6 col-md-5">
-						<input type="text" class="form-control"id="tmax" value="Y_max"
+					<div class="col col-xs-6">
+						<input type="text" class="form-control" id="tmax" value="Y_max"
 							onblur="if (this.value == '') {this.value = 'Y_max';}"
 							onfocus="if (this.value == 'Y_max') {this.value = '';}" />
 					</div>
@@ -98,49 +102,60 @@
 				<div class="row">
 					<h4>Threshold Values</h4>
 				</div>
-				<div class="row">
-					<div class="col-6 col-md-4">
+				<div class="row flex">
+					<div class="col col-xs-6">
 						<p>Spatial:</p>
 					</div>
-					<div class="col-6 col-md-5">
+					<div class="col col-xs-6">
 						<input type="text" class="form-control" id="sThresh" value="Xt"
 							onblur="if (this.value == '') {this.value = 'Xt';}"
 							onfocus="if (this.value == 'Xt') {this.value = '';}" />
 					</div>
 				</div>
-				<div class="row">
-					<div class="col-6 col-md-4">
+				<div class="row flex">
+					<div class="col col-xs-6">
 						<p>Temporal:</p>
 					</div>
-					<div class="col-6 col-md-5">
+					<div class="col col-xs-6">
 						<input type="text" class="form-control" id="tThresh" value="Yt"
 							onblur="if (this.value == '') {this.value = 'Yt';}"
 							onfocus="if (this.value == 'Yt') {this.value = '';}" />
 					</div>
 				</div>
-				<div class="row">
-					<div class="col-6 col-md-4">
+				<div class="row flex">
+					<div class="col col-xs-6">
 						<p>Cluster:</p>
 					</div>
-					<div class="col-6 col-md-5">
+					<div class="col col-xs-6">
 						<input type="text" class="form-control" id="cThresh" value="Ct"
 							onblur="if (this.value == '') {this.value = 'Ct';}"
 							onfocus="if (this.value == 'Ct') {this.value = '';}" />
 					</div>
 				</div>
-				<div class="row">
-					<button type="button" class="btn btn-default" id="changeVals" onClick="changeGraphAxes()">ReDraw</button>
+				<div class="row flex" >
+					<div class="col col-xs-12">
+						<button type="button" class="btn btn-default" id="changeVals" onClick="changeGraphAxes()">ReDraw</button>
+					</div>
 				</div>
 			</div>
-			<div class="col col-md-9">
-				<article class="drawingGrid">
-					<canvas id="myCanvas"></canvas>
-					<p class="rotate" id="axisLabel">Spatial Magnitude</p>
-				</article>
+			<div class="col col-xs-9">
+				<div class="row flex">
+					<div class="col col-xs-1">
+						<div class="verticaltext">
+							<p class="verticaltext content">Spatial Magnitude</p>
+						</div>
+					</div>
+					<div class="col col-xs-11">
+						<canvas id="myCanvas"></canvas>
+					</div>
+				</div>
 			</div>
 		</div>
 		<div class="row">
-			<button type="button" class="btn btn-default" id="getSTL" onClick="getSTL()" title="Get STL">Get STL</button>
+			<div class="col col-xs-12">
+				<br/>
+				<button type="button" class="btn btn-default" id="getSTL" onClick="getSTL()" title="Get STL">Get STL</button>
+			</div>
 		</div>
 	</div>
 	<!--<div class="footer">

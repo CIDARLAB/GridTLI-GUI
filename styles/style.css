@@ -41,34 +41,54 @@ nav img {
 
 /* TAB */
 
-
 canvas {
     width: 100%;
     height: 100%;
-    /*width: 710px;
-    height: 510px;
-    margin: 50px 0px 0 -50px;
-    display: block;*/
 }
 
-/* GENERAL */
-.rotate {
-    /* Safari */
-    -webkit-transform: rotate(-90deg);
-    /* Firefox */
-    -moz-transform: rotate(-90deg);
-    /* IE */
-    -ms-transform: rotate(-90deg);
-    /* Opera */
-    -o-transform: rotate(-90deg);
-    /* Internet Explorer */
-    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
-}
-
-.container .row,
+/* shows borders */
+/*.container .row,
 .container .col,
-.container .col.col-md-8
-.container .col-4,
-.container .col-8 {
+.container .col.col-xs-6,
+.container .col.col-xs-12 {
     border: 1px solid lightgray;
+}*/
+
+.row {
+    text-align: center;
+}
+
+.row.flex {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.row.flex .col.col-xs-6 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.col.col-xs-6,
+.col.col-xs-12,
+.col.col-xs-6 > input,
+.col.col-xs-12 > input {
+    text-align: center;
+}
+
+.verticaltext {
+    position: relative;
+    min-width: 150px;
+    margin: 87px -5px;
+    font-size: 12px;
+}
+
+.verticaltext.content {
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+    position: absolute;
 }

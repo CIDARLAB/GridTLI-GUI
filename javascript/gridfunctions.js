@@ -217,7 +217,7 @@ function getSTL() {
 
 function encodeJSON(result, filename) {
     // converts result/response file to a document and "clicks" to download
-    var result_string = JSON.stringify(result);
+    var result_string = JSON.stringify(result,null,2);
     var hiddenElement;
     var data = "data:text/json;charset=utf-8," + encodeURIComponent(result_string);
     hiddenElement = document.createElement('a');

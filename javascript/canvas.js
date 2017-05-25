@@ -49,14 +49,14 @@ window.onload = function() {
         fill: false,
         tolerance: 3
     };
-
+    console.log(paper.view.bounds)
     // Define tool to select a whole line segment
     selectLine = new Tool();
     selectLine.onMouseDown = function(event) {
         cnvs.activate(); // Define active layer:
         // limits use to within graph bounds: 
-        if ((50 <= event.point.x) && (event.point.x <= 700) &&
-        (10 <= event.point.y) && (event.point.y <= 460)) {
+        if ((50 <= event.point.x) && (event.point.x <= paper.view.bounds.width - 10) &&
+        (10 <= event.point.y) && (event.point.y <= paper.view.bounds.height - 50)) {
             var children = cnvs.children; // get all paths
             for (i = 0; i < children.length; i++) {
                 if (children[i].selected == true) {
@@ -101,8 +101,8 @@ window.onload = function() {
     drawLine.onMouseDown = function(event) {
         cnvs.activate(); // Define active layer:
         // limits use to within graph bounds
-        if ((50 <= event.point.x) && (event.point.x <= 700) &&
-        (10 <= event.point.y) && (event.point.y <= 460)) {
+        if ((50 <= event.point.x) && (event.point.x <= paper.view.bounds.width - 10) &&
+        (10 <= event.point.y) && (event.point.y <= paper.view.bounds.height - 50)) {
             var children = cnvs.children;
             for (i = 0; i < children.length; i++) {
                 if (children[i].selected) {
@@ -121,8 +121,8 @@ window.onload = function() {
     // at the position of the cursor:
     drawLine.onMouseDrag = function(event) {
         // limits use to within graph bounds
-        if ((50 <= event.point.x) && (event.point.x <= 700) &&
-        (10 <= event.point.y) && (event.point.y <= 460)) {
+        if ((50 <= event.point.x) && (event.point.x <= paper.view.bounds.width - 10) &&
+        (10 <= event.point.y) && (event.point.y <= paper.view.bounds.height - 50)) {
             numSegments = path.segments.length;
             if (event.point.x > path.segments[numSegments-1].point.x) {
                 path.add(event.point)
@@ -154,8 +154,8 @@ window.onload = function() {
 
         cnvs.activate(); // Define active layer:
         // limits use to within graph bounds
-        if ((50 <= event.point.x) && (event.point.x <= 700) &&
-        (10 <= event.point.y) && (event.point.y <= 460)) {
+        if ((50 <= event.point.x) && (event.point.x <= paper.view.bounds.width - 10) &&
+        (10 <= event.point.y) && (event.point.y <= paper.view.bounds.height - 50)) {
             var hitResult = project.hitTest(event.point, hitOptions);
             // allows you to delete a segment when holding down "shift"
             if (event.modifiers.shift) {
