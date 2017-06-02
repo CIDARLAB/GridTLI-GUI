@@ -49,7 +49,6 @@ window.onload = function() {
         fill: false,
         tolerance: 3
     };
-    console.log(paper.view.bounds)
     // Define tool to select a whole line segment
     selectLine = new Tool();
     selectLine.onMouseDown = function(event) {

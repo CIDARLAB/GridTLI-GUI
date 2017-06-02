@@ -241,7 +241,6 @@ function writeSTL(result, filename) {
 function convertPathsToJSON() {
     var jsonArray = [];
     for (i = 0; i < cnvs.children.length; i++) {
-        //var signalMap = {};     
         var signal = [];
         for (j = 0; j < cnvs.children[i].segments.length; j++) {
             var adjustedPair = changeCoordinateValues(cnvs.children[i].segments[j]);
@@ -250,7 +249,6 @@ function convertPathsToJSON() {
             map["y"] = adjustedPair.y;
             signal.push(map);
         }
-        //signalMap[i] = signal;
         jsonArray.push(signal);  
     }
     return jsonArray;
@@ -261,4 +259,15 @@ function changeCoordinateValues(currentPath) {
     adjustedPair["x"] = (currentPath.point.x - 50) * timeMax / 650;
     adjustedPair["y"] = ((460 - currentPath.point.y) * (spatialMax - spatialMin) / 450) + spatialMin;
     return adjustedPair;
+}
+
+// LOGIN FUNCTIONS 
+function openLogin() {
+    $(".login-form").css({"height":"85px","padding":"20px 20px 5px 10px"});
+    // $(".pageOverlay").css({"backgroundColor":"rgba(0,0,0,0.6)","width":"100%"})
+}
+
+function closeLogin() {
+    $(".login-form").css({"height":"0px","padding":"0px 20px 0px 10px"});
+    // $(".pageOverlay").css({"backgroundColor":"rgba(0,0,0,0)","width":"0px"})
 }

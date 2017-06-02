@@ -1,62 +1,83 @@
 /* NAVBAR */ 
-
-.navbar.navbar-inverse {
-    top: 0;
-    width: 100%;
+.navbar {
     height: 100px;
-    text-align: center;
-    background-color: black;
+    margin-bottom: 30px;
 }
 
 nav img {
-    float: left;
-    margin: 28px -226px 0 40px; /* -226 removes right-side offset for other content */
+    position: absolute;
+    margin: -60px 0px 0px -190px;
     height: 59px;
     width: 186px;
 }
 
-.nav.navbar-nav {
-    display: inline-block;
-    float: none;
-    margin-top: 67px;
+.collapse.navbar-collapse {
+    margin-top: 80px;
 }
 
-.nav.navbar-nav li a {
+.collapse.navbar-collapse li a {
     display: block;
-    width: 60px;
-    padding: 6px 10px;
+    width: 100px;
+    padding: 4px 0px 0px;
+    margin: 0px 15px;
     color: white;
     text-decoration: none;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 14px;
+    text-align: center;
     border: none;
 }
 
-.nav.navbar-nav li a:hover, 
-.nav.navbar-nav li a:focus,
-.nav.navbar-nav li a:active {
-    border-top: 6px solid #08ca75;
-    padding: 0px 10px 6px;
+.nav-item:hover, 
+.nav-item:focus,
+.nav-item:active,
+.nav-item.active {
+    border-bottom: 8px solid #08ca75;
 }
 
-/* TAB */
+.btn.btn-secondary.dropdown-toggle {
+    color: white;
+    background-color: transparent;
+    border: none;
+    font-size: 14px;
+    position: fixed;
+    top: 0;
+    right: 0;
 
-canvas {
-    width: 100%;
-    height: 100%;
 }
 
-/* shows borders */
-/*.container .row,
-.container .col,
-.container .col.col-xs-6,
-.container .col.col-xs-12 {
-    border: 1px solid lightgray;
-}*/
-
-.row {
-    text-align: center;
+.login-form {
+    height: 0px;
+    width: 220px;
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    background-color: #19191f; 
+    overflow-x: hidden;
+    padding: 0px 20px 0px 10px;
+    transition: 0.4s;
 }
+
+.login-form .closebtn {
+    position: absolute;
+    padding: 4px 8px 8px 32px;
+    top: 0;
+    right: 5px;
+    font-size: 12px;
+    color: white;
+    transition: 0.4s;
+}
+
+.login-form-item {
+    width: 200px;
+    background: #8dffbf;
+    border: 1px outset black;
+    font-size: 12px;
+    margin: 2px 0px;
+}
+
+/* ALL PAGES */
 
 .row.flex {
     display: flex;
@@ -64,23 +85,272 @@ canvas {
     justify-content: center;
 }
 
-.row.flex .col.col-xs-6 {
+.row.flex .col.flex {
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
 
-.col.col-xs-6,
-.col.col-xs-12,
-.col.col-xs-6 > input,
-.col.col-xs-12 > input {
+/* set to gray to show borders */
+.row,
+.col {
+    border: 1px solid white;
+}
+
+/*SPECIFY*/
+
+/* Specify Sidebar */
+
+#sidebarLeft {
+    width: 400px;
+    height: 500px;
+}
+
+/* Specify Settings */
+.pageOverlay {
+    height: 100%;
+    width: 0px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(0,0,0,0);
+    z-index: 1;
+}
+
+.settings {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    background-color: #19191f; 
+    overflow-x: hidden;
+    padding-top: 60px; 
+    transition: 0.5s;
+}
+
+.settings .closebtn {
+    position: absolute;
+    padding: 8px 8px 8px 32px;
+    top: 0;
+    right: 20px;
+    font-size: 20px;
+    color: white;
+    transition: 0.3s;
+}
+
+.settings a {
+    text-decoration: none;
+    font-size: 14px;
+    color: white;
+    display: block;
+}
+
+.settings a:hover, .offcanvas a:focus{
+    color: #f1f1f1;
+}
+
+.settings ul {
+    color: white;
+    font-size: 14px;
+}
+
+.settings .fa {
+    background-color: #19191f;
+    color: purple;
+}
+
+/* SPECIFY PAGES */
+.stl {
+    height: 36px;
+}
+
+.functional {
+    display: none;
+    height: 34px;
+}
+
+.text-muted.functional {
+    margin: 12px 0px -6px;
+}
+
+.struct {
+    display: none;
+}
+
+.struct.struct-top-row {
+    height: 25px;
+}
+
+.container.float-left {
+    width: calc(100% - 100px);
+    height: 500px;
+}
+
+.btn.btn-secondary.round {
+    border-radius: 24px;
+    border-color: #08ca75;
+    border-width: 3px;
+    color: #08ca75;
+    width: 129px;
+    height: 41px;
+    font-size: 14px;
+}
+
+.btn.btn-sm.btn-secondary.round {
+    border-radius: 20px;
+    border-color: #08ca75;
+    border-width: 3px;
+    color: #08ca75;
+    width: 89px;
+    height: 31px;
+    font-size: 12px;
+}
+
+.btn.btn-secondary.round:hover {
+    background-color: #08ca75;
+    color: white;
+}
+
+.flex-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding-right: 35px;
+}
+
+#editor {
+    height: 500px;
+    width: 100%;
+    background-color: white;
+}
+
+.col-12.editor {
+    margin: 10px 0px;
+    border: 1.5px solid #D6D6D6;
+    border-radius: 24px;
+}
+
+.img-logo-small {
+    width: 100px;
+    height: 38px;
+    margin-left: -10px;
+}
+
+.structbox {
+    margin: 10px 0px;
+    border: 1.5px solid #D6D6D6;
+    border-radius: 24px;
+    height: 500px;
+    padding: 20px 16px;
+}
+
+.struct-header {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.struct-text {
+    color: #4A4A4A;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: right;
+    padding-top: 8px;
+}
+
+.form-control.struct {
+    width: calc(100% - 22px);
+}
+
+.btn-settings {
+    border: none;
+    padding-right: 4px;
+    padding-left: 4px;
+}
+
+.text-muted {
+    color: #9b9b9b;
+}
+
+.table-row {
+    height: 300px;
+    overflow: auto;
+    width: 100%;
+}
+
+tbody {
+    height: 280px;
+    overflow-y:auto;
+    width: 100%;
+}
+thead,tbody,tr,td,th {
+    display:block;
+    /*border: none;*/
+}
+tbody > tr.row {
+    border-bottom: 2px solid lightgray;
+}
+
+tbody > td {
+    float:left;
+    height: 30px;
+}
+
+thead > tr > th {
+    float:left;
+}
+
+
+/* layout.css Style */
+.upload-drop-zone {
+  height: 100px;
+  border-width: 2px;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.upload-drop-zone {
+  color: #9B9B9B;
+  border-style: dashed;
+  border-color: #9B9B9B;
+  line-height: 100px;
+  text-align: center
+}
+.upload-drop-zone.drop {
+  color: #222;
+  border-color: #222;
+}
+
+/* GRIDTLI STYLE */
+
+/* GridTLI Canvas */
+
+.fa {
+    width: 12px;
+}
+
+#myCanvas {
+    width: 100%;
+    height: 100%;
+    margin-top: -174px;
+}
+
+.row.grid {
+    text-align: center;
+}
+
+.col.col-6.grid,
+.col.col-12.grid,
+.col.col-6.grid > input,
+.col.col-12.grid > input {
     text-align: center;
 }
 
 .verticaltext {
     position: relative;
     min-width: 150px;
-    margin: 87px -5px;
+    margin: 95px -35px;
     font-size: 12px;
 }
 

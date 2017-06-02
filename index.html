@@ -2,169 +2,186 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-  	<meta name="viewport" content="width=device-width, initial-scale=1">
+  	<meta name="viewport" http-equiv="X-UA-Compatible" content="width=device-width, initial-scale=1, IE=edge, chrome=1">
     <title>GridTLI GUI</title>
-	<!-- load script that controls grid functions -->
-	<script type="text/javascript" src="./javascript/gridfunctions.js"></script>
 	<!-- load paper.js -->
     <script type="text/javascript" src="./javascript/paper-full.js"></script>
-	<!-- load script that defines the canvas -->
-	<script type="text/javascript" src="./javascript/canvas.js"></script>
 	<!-- load jquery -->
 	<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
-	<!-- load bootstrap javascript -->
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" 
-		integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" 
-		crossorigin="anonymous"></script>
+	<!-- load script that controls grid functions -->
+	<script type="text/javascript" src="./javascript/gridfunctions.js"></script>
+	<!-- load script that defines the canvas -->
+	<script type="text/javascript" src="./javascript/canvas.js"></script>
 	<!-- load bootstrap css -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-		integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-		crossorigin="anonymous">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
+        integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ"
+        crossorigin="anonymous">
+    <!-- load font awesome (glyphicons) -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 	<!--load custom stylesheet -->
     <link rel="stylesheet" href="./styles/style.css"></link>
 </head>
 <body>
-	<nav class="navbar navbar-inverse">
-		<div class="container-fluid">
-    		<div class="navbar-header">
-				<img src="./images/logo/phoenix_banner.png" class="navbar-left">
-    		</div>
-			<ul class="nav navbar-nav">
-				<li><a href="#">Home</a></li>
-				<li><a href="#">STL</a></li>
-			</ul>
-		</div>
-	</nav>
-	<div class="container" id="tab">
-		<div class="row" id="tab">
-			<div class="col-xs-3">
-				<div class="row">
-					<div class="btn-group pull-left">
-						<button type="button" class="btn btn-default" onClick="selectLine.activate()" title="Select">
-							<span class="glyphicon glyphicon-hand-up"></span>
-						</button>
-						<button type="button" class="btn btn-default" onClick="drawLine.activate()" title="Draw">
-							<span class="glyphicon glyphicon-pencil"></span>
-						</button>
-						<button type="button" class="btn btn-default" onClick="drawPoints.activate()" title="Point">
-							<span class="glyphicon glyphicon-option-horizontal"></span>
-						</button>
-						<button type="button" class="btn btn-default" onClick="deleteLine.activate()" title="Erase">
-							<span class="glyphicon glyphicon-erase"></span>
-						</button>
-						<button type="button" class="btn btn-default" onClick="movePoints.activate()" title="Move">
-							<span class="glyphicon glyphicon-move"></span>
-						</button>
-					</div>
-					<div class="btn-group pull-right">
-						<button type="button" class="btn btn-default" onClick="saveProject()" title="Save Project">
-							<span class="glyphicon glyphicon-floppy-save"></span>
-						</button>
-						<button type="button" class="btn btn-default" onClick="exportData()" title="Export Data">
-							<span class="glyphicon glyphicon-download-alt"></span>
-						</button>
-					</div>
-				</div>
-				<div class="row">
-					<h4>Axis Values</h4>
-				</div>
-				<div class="row flex">
-					<div class="col col-xs-6">
-						<p>Spatial:</p>
-					</div>
-					<div class="col col-xs-6">
-						<div class="row flex">
-							<div class="col col-xs-12">
-								<input type="text" class="form-control" id="smin" value="X_min"
-									onblur="if (this.value == '') {this.value = 'X_min';}"
-									onfocus="if (this.value == 'X_min') {this.value = '';}" />
-							</div>
-						</div>
-						<div class="row flex">
-							<div class="col col-xs-12">
-								<input type="text" class="form-control"id="smax" value="X_max"
-									onblur="if (this.value == '') {this.value = 'X_max';}"
-									onfocus="if (this.value == 'X_max') {this.value = '';}" />
-							</div>
+	<nav class="navbar navbar-toggleable-sm navbar-inverse bg-inverse main-nav">
+        <div class="container">
+            <ul class="collapse navbar-collapse flex-grow">
+				<img src="./images/logo/phoenix_banner.png">
+            </ul>
+            <ul class="collapse navbar-collapse flex-grow justify-content-center">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">HOME</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">STL</a>
+                </li>
+            </ul>
+            <ul class="collapse navbar-collapse flex">
+                <button class="btn btn-secondary dropdown-toggle" type="button" onClick="openLogin()">
+                    LOGIN
+                </button>
+                <div id="login-form" class="login-form">
+                    <a href="javascript:void(0)" class="closebtn" onClick="closeLogin()">x</a>
+                    <input class="login-form-item" placeholder="Username">
+                    <input class="login-form-item" placeholder="Password">
+                </div>
+            </ul>
+        </div>
+    </nav>
+	<div class="container">
+		<div class="row grid">
+			<div class="col col-3">
+				<div class="row grid">
+					<div class="col">
+						<div class="btn-group float-left">
+							<button type="button" class="btn btn-secondary" onClick="selectLine.activate()" title="Select">
+								<span class="fa fa-mouse-pointer"></span>
+							</button>
+							<button type="button" class="btn btn-secondary" onClick="drawLine.activate()" title="Draw">
+								<span class="fa fa-pencil"></span>
+							</button>
+							<button type="button" class="btn btn-secondary" onClick="drawPoints.activate()" title="Point">
+								<span class="fa fa-ellipsis-h"></span>
+							</button>
+							<button type="button" class="btn btn-secondary" onClick="deleteLine.activate()" title="Erase">
+								<span class="fa fa-eraser"></span>
+							</button>
+							<button type="button" class="btn btn-secondary" onClick="movePoints.activate()" title="Move">
+								<span class="fa fa-arrows"></span>
+							</button>
 						</div>
 					</div>
 				</div>
-				<div class="row flex">
-					<div class="col col-xs-6">
-						<p>Temporal:</p>
-					</div>
-					<div class="col col-xs-6">
-						<input type="text" class="form-control" id="tmax" value="Y_max"
-							onblur="if (this.value == '') {this.value = 'Y_max';}"
-							onfocus="if (this.value == 'Y_max') {this.value = '';}" />
+				<div class="row grid">
+					<div class="col">
+						<div class="btn-group float-left">
+							<button type="button" class="btn btn-secondary" onClick="saveProject()" title="Save Project">
+								<span class="fa fa-save"></span>
+							</button>
+							<button type="button" class="btn btn-secondary" onClick="exportData()" title="Export Data">
+								<span class="fa fa-download"></span>
+							</button>
+						</div>
 					</div>
 				</div>
-				<div class="row">
-					<h4>Threshold Values</h4>
+				<div class="row grid">
+					<div class="col">
+						<h5>Axis Values</h5>
+					</div>
 				</div>
 				<div class="row flex">
-					<div class="col col-xs-6">
+					<div class="col col-6 flex">
 						<p>Spatial:</p>
 					</div>
-					<div class="col col-xs-6">
-						<input type="text" class="form-control" id="sThresh" value="Xt"
-							onblur="if (this.value == '') {this.value = 'Xt';}"
-							onfocus="if (this.value == 'Xt') {this.value = '';}" />
+					<div class="col col-6 flex">
+						<div class="row flex">
+							<div class="col">
+								<input type="text" class="form-control" id="smin" value="Y_min"
+									onblur="if (this.value == '') {this.value = 'Y_min';}"
+									onfocus="if (this.value == 'Y_min') {this.value = '';}" />
+							</div>
+						</div>
+						<div class="row flex">
+							<div class="col">
+								<input type="text" class="form-control"id="smax" value="Y_max"
+									onblur="if (this.value == '') {this.value = 'Y_max';}"
+									onfocus="if (this.value == 'Y_max') {this.value = '';}" />
+							</div>
+						</div>
 					</div>
 				</div>
 				<div class="row flex">
-					<div class="col col-xs-6">
+					<div class="col col-6 flex">
 						<p>Temporal:</p>
 					</div>
-					<div class="col col-xs-6">
-						<input type="text" class="form-control" id="tThresh" value="Yt"
+					<div class="col col-6 flex">
+						<input type="text" class="form-control" id="tmax" value="T_max"
+							onblur="if (this.value == '') {this.value = 'T_max';}"
+							onfocus="if (this.value == 'T_max') {this.value = '';}" />
+					</div>
+				</div>
+				<div class="row grid">
+					<div class="col">
+						<h5>Threshold Values</h5>
+					</div>
+				</div>
+				<div class="row flex">
+					<div class="col col-6 flex">
+						<p>Spatial:</p>
+					</div>
+					<div class="col col-6 flex">
+						<input type="text" class="form-control" id="sThresh" value="Yt"
 							onblur="if (this.value == '') {this.value = 'Yt';}"
 							onfocus="if (this.value == 'Yt') {this.value = '';}" />
 					</div>
 				</div>
 				<div class="row flex">
-					<div class="col col-xs-6">
+					<div class="col col-6 flex">
+						<p>Temporal:</p>
+					</div>
+					<div class="col col-6 flex">
+						<input type="text" class="form-control" id="tThresh" value="Tt"
+							onblur="if (this.value == '') {this.value = 'Tt';}"
+							onfocus="if (this.value == 'Tt') {this.value = '';}" />
+					</div>
+				</div>
+				<div class="row flex">
+					<div class="col col-6 flex">
 						<p>Cluster:</p>
 					</div>
-					<div class="col col-xs-6">
+					<div class="col col-6 flex">
 						<input type="text" class="form-control" id="cThresh" value="Ct"
 							onblur="if (this.value == '') {this.value = 'Ct';}"
 							onfocus="if (this.value == 'Ct') {this.value = '';}" />
 					</div>
 				</div>
 				<div class="row flex" >
-					<div class="col col-xs-12">
-						<button type="button" class="btn btn-default" id="changeVals" onClick="changeGraphAxes()">ReDraw</button>
+					<div class="col">
+						<button type="button" class="btn btn-secondary" id="changeVals" onClick="changeGraphAxes()">ReDraw</button>
 					</div>
 				</div>
 			</div>
-			<div class="col col-xs-9">
+			<div class="col col-9">
 				<div class="row flex">
-					<div class="col col-xs-1">
-						<div class="verticaltext">
+					<div class="col">
+						<div class="verticaltext float-left">
 							<p class="verticaltext content">Spatial Magnitude</p>
 						</div>
-					</div>
-					<div class="col col-xs-11">
-						<canvas id="myCanvas"></canvas>
+						<canvas id="myCanvas" class="float-right"></canvas>
 					</div>
 				</div>
 			</div>
 		</div>
-		<div class="row">
-			<div class="col col-xs-12">
+		<div class="row grid">
+			<div class="col">
 				<br/>
-				<button type="button" class="btn btn-default" id="getSTL" onClick="getSTL()" title="Get STL">Get STL</button>
+				<button type="button" class="btn btn-secondary" id="getSTL" onClick="getSTL()" title="Get STL">Get STL</button>
 			</div>
 		</div>
 	</div>
-	<!--<div class="footer">
-		<a href="http://cidarlab.org/" target="_blank">
-			<img src="./images/logo/cidar_s.png" alt="CIDAR Lab" style="width:142px">
-		</a>
-		<a href="http://www.bu.edu" target="_blank">
-			<img src="./images/logo/bu.png" alt="BU.EDU">
-		</a>
-	</div>-->
+	 <!-- load bootstrap javascript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"
+        integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"
+        integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
 </body>
 </html>
