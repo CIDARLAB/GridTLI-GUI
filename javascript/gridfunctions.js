@@ -39,14 +39,65 @@ function getPathIndex(path) {
 function changeGraphAxes() {
     grid.removeChildren(); // delete previous grid
 
+    var spatialMin, spatialMax, spatialThresh;
+    var timeMax, timeThresh;
+
     // get new grid values:
-    var spatialMin = document.getElementById('smin').value;
-    var spatialMax = document.getElementById('smax').value;
-    var spatialThresh = document.getElementById('sThresh').value;
+    if ($('#smin').val() == "") {
+        spatialMin = -6;
+    } else if (isNaN($('#smin').val())) {
+        alert("Error! Spatial Mininum must be a number. Resetting to Spatial Defaults.");
+        spatialMin = -6;
+        spatialMax = 6;
+        spatialThresh = 1;
+    } else {
+        spatialMin = $('#smin').val();
+    };
+
+    if ($('#smax').val() == "") {
+        spatialMax = 6;
+    } else if (isNaN($('#smax').val()) || (spatialMax - spatialMin <= 0)) {
+        alert("Error! Spatial Maximum must be a number greater than Spatial Minimum. Resetting to Spatial Defaults.");
+        spatialMin = -6;
+        spatialMax = 6;
+        spatialThresh = 1;
+    } else {
+        spatialMax = $('#smax').val();
+    };
+
+    if ($('#sThresh').val() == "") {
+        spatialThresh = 1;
+    } else if (isNaN($('#sThresh').val()) || ($('#sThresh').val() <= 0)) {
+        alert("Error! Spatial Threshold must be a number greater than 0. Resetting to Spatial Defaults.");
+        spatialMin = -6;
+        spatialMax = 6;
+        spatialThresh = 1;
+    } else {
+        spatialThresh = $('#sThresh').val();
+    };
+
     nSpatialDivs = Math.ceil((spatialMax - spatialMin) / spatialThresh);
 
-    var timeMax = document.getElementById('tmax').value;
-    var timeThresh = document.getElementById('tThresh').value;
+    if ($('#tmax').val() == "") {
+        timeMax = 16;
+    } else if (isNaN($('#tmax').val()) || ($('#tmax').val() <= 0)) {
+        alert("Error! Maximum Time must be a number greater than 0. Resetting to Temporal Defaults.");
+        timeMax = 16;
+        timeThresh = 1;
+    } else {
+        timeMax = $('#tmax').val();
+    };
+    
+    if ($('#tThresh').val() == "") {
+        timeThresh = 1;
+    } else if (isNaN($('#tThresh').val()) || ($('#tThresh').val() <= 0)) {
+        alert("Error! Temporal Threshold must be a number greater than 0. Resetting to Temporal Defaults.");
+        timeMax = 16;
+        timeThresh = 1;
+    } else {
+        timeThresh = $('#tThresh').val();
+    };
+    
     nTimeDivs = Math.ceil(timeMax / timeThresh);
 
     timeValues = linspace(0, timeMax, nTimeDivs + 1)
@@ -194,16 +245,43 @@ function getSTL() {
     // get the filename (default = 'gridData.json')
     var jsonArray = convertPathsToJSON();
     
+    // check values for errors / fill in defaults
+    if ($('#sThresh').val() == "") {
+        spatialThresh = 1;
+    } else if (isNaN($('#sThresh').val()) || ($('#sThresh').val() <= 0)) {
+        alert("Error! Spatial Threshold must be a number greater than 0. Default = 1.");
+        spatialThresh = 1;
+    } else {
+        spatialThresh = $('#sThresh').val();
+    };
+
+    if ($('#tThresh').val() == "") {
+        timeThresh = 1;
+    } else if (isNaN($('#tThresh').val()) || ($('#tThresh').val() <= 0)) {
+        alert("Error! Temporal Threshold must be a number greater than 0. Default = 1.");
+        timeThresh = 1;
+    } else {
+        timeThresh = $('#tThresh').val();
+    };
+
+    if ($('#cThresh').val() == "") {
+        clusterThresh = 1;
+    } else if (isNaN($('#cThresh').val()) || ($('#cThresh').val() <= 0)) {
+        alert("Error! Cluster Threshold must be a number greater than 0. Default = 1.");
+        clusterThresh = 1;
+    } else {
+        clusterThresh = $('#cThresh').val();
+    };
+
      $.ajax({
         url: "getSTL",
         type: "POST",
         data: {
             "bar":"foo",
             "signals": JSON.stringify(jsonArray), 
-            "xt":document.getElementById('sThresh').value,
-            "tt":document.getElementById('tThresh').value,
-            "ct":document.getElementById('cThresh').value
-
+            "xt": spatialThresh,
+            "tt": timeThresh,
+            "ct": clusterThresh,
         },
         success: function (response) {
             filename = "stl.txt";

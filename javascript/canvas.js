@@ -10,7 +10,10 @@ var nSpatialDivs = 12;
 var nTimeDivs = 16;
 var spatialMin = -6;
 var spatialMax = 6;
+var spatialThresh = 1;
 var timeMax = 16;
+var timeThresh = 1; 
+var clusterThresh = 1;
 
 // Initialize Save/Output Variables
 var allPathsList = [];

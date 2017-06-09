@@ -91,22 +91,33 @@ nav img {
     justify-content: center;
 }
 
-/* set to gray to show borders */
-.row,
-.col {
-    border: 1px solid white;
+.grid-border {
+    border: 1.5px solid #D6D6D6;
+    border-radius: 24px;
+    height: 600px;
+    padding: 15px;
 }
 
-/*SPECIFY*/
 
-/* Specify Sidebar */
+/* Without this, the square corners of the text editors
+in the Specify Pages appear on top of the gray border.
+Set to white when not being use to error-check */
+.row,
+.col {
+    border: 1px solid transparent;
+}
+
+/********* SPECIFY *********/
+
+/*** Sidebar ***/
 
 #sidebarLeft {
     width: 400px;
     height: 500px;
 }
 
-/* Specify Settings */
+/*** Settings Overlay ***/
+
 .pageOverlay {
     height: 100%;
     width: 0px;
@@ -124,10 +135,11 @@ nav img {
     z-index: 2;
     top: 0;
     right: 0;
-    background-color: #19191f; 
+    background-color: white;
     overflow-x: hidden;
     padding-top: 60px; 
     transition: 0.5s;
+    color: #19191f;
 }
 
 .settings .closebtn {
@@ -136,58 +148,36 @@ nav img {
     top: 0;
     right: 20px;
     font-size: 20px;
-    color: white;
+    color: #19191f;
     transition: 0.3s;
 }
 
+.settings .list-group-item {
+    width: 100%;
+}
+
 .settings a {
+    color: #19191f;
+}
+
+.settings a:hover {
+    color: #4A4A4A;
     text-decoration: none;
-    font-size: 14px;
-    color: white;
-    display: block;
 }
 
-.settings a:hover, .offcanvas a:focus{
-    color: #f1f1f1;
-}
-
-.settings ul {
-    color: white;
-    font-size: 14px;
+.settings .input-group.input-area {
+    margin-top: 10px;
 }
 
 .settings .fa {
-    background-color: #19191f;
-    color: purple;
+    background-color: transparent;
 }
 
-/* SPECIFY PAGES */
-.stl {
-    height: 36px;
+.settings .fa.fa-close {
+    background-color: transparent;
 }
 
-.functional {
-    display: none;
-    height: 34px;
-}
-
-.text-muted.functional {
-    margin: 12px 0px -6px;
-}
-
-.struct {
-    display: none;
-}
-
-.struct.struct-top-row {
-    height: 25px;
-}
-
-.container.float-left {
-    width: calc(100% - 100px);
-    height: 500px;
-}
-
+/*** GENERAL SPECIFY PAGES ***/
 .btn.btn-secondary.round {
     border-radius: 24px;
     border-color: #08ca75;
@@ -213,29 +203,66 @@ nav img {
     color: white;
 }
 
-.flex-right {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    padding-right: 35px;
+.text-muted {
+    color: #9b9b9b;
 }
 
-#editor {
+.grid-border.spec {
     height: 500px;
+}
+
+.editor {
+    height: calc(100%-5px);
     width: 100%;
     background-color: white;
-}
-
-.col-12.editor {
-    margin: 10px 0px;
+    font-size: 12px;
+    margin: 5px 0px;
     border: 1.5px solid #D6D6D6;
     border-radius: 24px;
+}
+
+/*** STL ***/
+.stl {
+    height: 36px;
+}
+
+/*** FUNCTIONAL ***/
+
+.functional {
+    display: none;
+    height: 34px;
+}
+
+.text-muted.functional {
+    margin: 12px 0px -6px;
 }
 
 .img-logo-small {
     width: 100px;
     height: 38px;
     margin-left: -10px;
+}
+
+/*** STRUCTURAL ***/
+
+.struct {
+    display: none;
+}
+
+.struct.struct-top-row {
+    height: 25px;
+}
+
+.container.float-left {
+    width: calc(100% - 100px);
+    height: 500px;
+}
+
+.flex-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding-right: 35px;
 }
 
 .structbox {
@@ -269,10 +296,6 @@ nav img {
     padding-left: 4px;
 }
 
-.text-muted {
-    color: #9b9b9b;
-}
-
 .table-row {
     height: 300px;
     overflow: auto;
@@ -302,29 +325,190 @@ thead > tr > th {
 }
 
 
-/* layout.css Style */
-.upload-drop-zone {
-  height: 100px;
-  border-width: 2px;
-  margin-bottom: 20px;
-  width: 100%;
+/********* DESIGN PAGE *********/
+
+.des-height {
+    height: 340px;
 }
 
-.upload-drop-zone {
-  color: #9B9B9B;
-  border-style: dashed;
-  border-color: #9B9B9B;
-  line-height: 100px;
-  text-align: center
-}
-.upload-drop-zone.drop {
-  color: #222;
-  border-color: #222;
+/*** TREEVIEW ***/
+.treeview .list-group-item {
+    font-size: 12px;
+    height: 26px;
 }
 
-/* GRIDTLI STYLE */
+.form-inline.treeview .form-control {
+    font-size: 12px;
+    height: 26px;
+}
 
-/* GridTLI Canvas */
+.form-inline.treeview .checkbox {
+    font-size: 12px;
+    margin: 0px 6px;
+}
+
+#treeview-searchable {
+    max-height: 280px;
+    overflow: scroll;
+}
+
+/*** SBOL VISUAL ***/
+
+#sbolCanvas {
+    width: 100%;
+    height: 200px;
+}
+
+/*** DRAG N DROP ***/
+
+/*forces the upload to fit into its column/row*/
+/*.col.col-12.box-form {
+    padding: 0px;
+}*/
+
+.box {
+    text-align: center;
+    position: relative;
+    padding: 100px 0px;
+    /*height: 310px;*/
+}
+
+.box.has-advanced-upload {
+    outline: 2px dashed #9b9b9b;
+    outline-offset: -10px;
+    -webkit-transition: outline-offset .15s ease-in-out, background-color .15s linear;
+    transition: outline-offset .15s ease-in-out, background-color .15s linear;
+}
+
+.box.is-dragover {
+    outline-offset: -20px;
+    outline-color: #9b9b9b;
+    background-color: #fff;
+}
+
+.box-dragndrop,
+.box-icon {
+    display: none;
+}
+
+.box.has-advanced-upload .box-dragndrop  {
+    display: inline;
+}
+
+.box.has-advanced-upload .box-icon {
+    width: 100%;
+    height: 80px;
+    fill: #9b9b9b;
+    display: block;
+    margin-bottom: 40px;
+}
+
+.box.is-uploading .box-input,
+.box.is-success .box-input,
+.box.is-error .box-input {
+    visibility: hidden;
+}
+
+.box-uploading,
+.box-success,
+.box-error {
+    display: none;
+}
+
+.box.is-uploading .box-uploading,
+.box.is-success .box-success,
+.box.is-error .box-error {
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 0;
+    left: 0;
+
+    -webkit-transform: translateY( -50% );
+    transform: translateY( -50% );
+}
+
+.box-uploading {
+    font-style: italic;
+}
+
+.box-success {
+    -webkit-animation: appear-from-inside .25s ease-in-out;
+    animation: appear-from-inside .25s ease-in-out;
+}
+
+@-webkit-keyframes appear-from-inside {
+    from	{ -webkit-transform: translateY( -50% ) scale( 0 ); }
+    75%		{ -webkit-transform: translateY( -50% ) scale( 1.1 ); }
+    to		{ -webkit-transform: translateY( -50% ) scale( 1 ); }
+}
+@keyframes appear-from-inside {
+    from	{ transform: translateY( -50% ) scale( 0 ); }
+    75%		{ transform: translateY( -50% ) scale( 1.1 ); }
+    to		{ transform: translateY( -50% ) scale( 1 ); }
+}
+
+.box-restart {
+    font-weight: 700;
+}
+
+.box-restart:focus,
+.box-restart:hover {
+    color: #39bfd3;
+}
+
+.js .box-file  {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+.js .box-file + label {
+    max-width: 80%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+    display: inline-block;
+    overflow: hidden;
+}
+
+.js .box-file + label:hover strong,
+.box-file:focus + label strong,
+.box-file.has-focus + label strong  {
+    color: #39bfd3;
+}
+
+.js .box-file:focus + label,
+.js .box-file.has-focus + label  {
+    outline: 1px dotted #000;
+    outline: -webkit-focus-ring-color auto 5px;
+}
+
+.no-js .box-file + label {
+    display: none;
+}
+
+.no-js .box-button  {
+    display: block;
+}
+.box-button {
+    font-weight: 700;
+    color: #e5edf1;
+    background-color: #39bfd3;
+    display: none;
+    padding: 8px 16px;
+    margin: 40px auto 0;
+}
+
+.box-button:hover,
+.box-button:focus  {
+    background-color: #0f3c4b;
+}
+
+
+/********* GRIDTLI STYLE *********/
 
 .fa {
     width: 12px;
@@ -361,4 +545,17 @@ thead > tr > th {
     -o-transform: rotate(-90deg);
     filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
     position: absolute;
+}
+
+
+/********* TEST *********/
+
+.test-graph {
+    height: 280px;
+    border: 1px dashed peru;
+}
+
+.test-pigeon {
+    height: 280px;
+    border: 1px dashed peru;
 }
