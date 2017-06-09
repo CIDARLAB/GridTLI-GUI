@@ -242,9 +242,7 @@ function exportData() {
 }
 
 function getSTL() {
-    // get the filename (default = 'gridData.json')
     var jsonArray = convertPathsToJSON();
-    
     // check values for errors / fill in defaults
     if ($('#sThresh').val() == "") {
         spatialThresh = 1;
@@ -334,8 +332,10 @@ function convertPathsToJSON() {
 
 function changeCoordinateValues(currentPath) {
     var adjustedPair = {}; // initializes as empty array
-    adjustedPair["x"] = (currentPath.point.x - 50) * timeMax / 650;
-    adjustedPair["y"] = ((460 - currentPath.point.y) * (spatialMax - spatialMin) / 450) + spatialMin;
+    adjustedPair["x"] = (currentPath.point.x - 50) * timeMax / (paper.view.bounds.width - 60);
+    adjustedPair["y"] = (((paper.view.bounds.height - 50) - currentPath.point.y) * (spatialMax - spatialMin) / (paper.view.bounds.height - 60)) + spatialMin;
+    console.log(currentPath.point.x, currentPath.point.y)
+    console.log(adjustedPair.x, adjustedPair.y)
     return adjustedPair;
 }
 
