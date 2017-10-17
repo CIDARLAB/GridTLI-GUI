@@ -12,6 +12,8 @@
 	<script type="text/javascript" src="./javascript/gridfunctions.js"></script>
 	<!-- load script that defines the canvas -->
 	<script type="text/javascript" src="./javascript/canvas.js"></script>
+	<!-- load functions javascript -->
+	<script type="text/javascript" src="./javascript/functions.js"></script>
 	<!-- load bootstrap css -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
         integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ"
@@ -19,40 +21,27 @@
     <!-- load font awesome (glyphicons) -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 	<!--load custom stylesheet -->
-    <link rel="stylesheet" href="./styles/style.css"></link>
+	<link rel="stylesheet" href="./styles/style.css"></link>
+	<link rel="stylesheet" href="./styles/grid.css"></link>
 </head>
 <body>
-	<nav class="navbar navbar-toggleable-sm navbar-inverse bg-inverse main-nav">
-        <div class="container">
-            <ul class="collapse navbar-collapse flex-grow">
-				<img src="./images/logo/phoenix_banner.png">
-            </ul>
-            <ul class="collapse navbar-collapse flex-grow justify-content-center">
-                <li class="nav-item active">
-                    <a class="nav-link" href="#">HOME</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">STL</a>
-                </li>
-            </ul>
-            <ul class="collapse navbar-collapse flex">
-                <button class="btn btn-secondary dropdown-toggle" type="button" onClick="openLogin()">
-                    LOGIN
-                </button>
-                <div id="login-form" class="login-form">
-                    <a href="javascript:void(0)" class="closebtn" onClick="closeLogin()">x</a>
-                    <input class="login-form-item" placeholder="Username">
-                    <input class="login-form-item" placeholder="Password">
-                </div>
-            </ul>
-        </div>
-    </nav>
-	<div class="container">
-		<div class="row grid">
-			<div class="col col-3">
-				<div class="row grid">
-					<div class="col">
-						<div class="btn-group float-left">
+	<nav class="navbar navbar-toggleable-xs navbar-light bg-faded main-nav" id='grd-navbar'>
+	</nav>
+	<div class="wrap">
+		<div class="container">
+			<div class="row grid">
+				<div class="col">
+					<div class="row flex">
+						<div class="col">
+							<canvas id="myCanvas"></canvas>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row grid">
+				<div class="row grid align-items-center">
+					<div class="col-2 reduced-padding">
+						<div class="btn-group">
 							<button type="button" class="btn btn-secondary" onClick="selectLine.activate()" title="Select">
 								<span class="fa fa-mouse-pointer"></span>
 							</button>
@@ -62,110 +51,115 @@
 							<button type="button" class="btn btn-secondary" onClick="drawPoints.activate()" title="Point">
 								<span class="fa fa-ellipsis-h"></span>
 							</button>
+						</div>
+						<div class="btn-group">                                                        
 							<button type="button" class="btn btn-secondary" onClick="deleteLine.activate()" title="Erase">
 								<span class="fa fa-eraser"></span>
-							</button>
+							</button>                                                     
 							<button type="button" class="btn btn-secondary" onClick="movePoints.activate()" title="Move">
 								<span class="fa fa-arrows"></span>
 							</button>
-						</div>
-					</div>
-				</div>
-				<div class="row grid">
-					<div class="col">
-						<div class="btn-group float-left">
-							<button type="button" class="btn btn-secondary" onClick="saveProject()" title="Save Project">
-								<span class="fa fa-save"></span>
-							</button>
-							<button type="button" class="btn btn-secondary" onClick="exportData()" title="Export Data">
-								<span class="fa fa-download"></span>
+							<button type="button" class="btn btn-secondary" onClick="movePoints.activate()" title="Move">
+								<span class="fa fa-upload"></span>
 							</button>
 						</div>
 					</div>
-				</div>
-				<div class="row grid">
-					<div class="col">
-						<h5>Axis Values</h5>
-					</div>
-				</div>
-				<div class="row flex">
-					<div class="col col-6 flex">
-						<p>Spatial:</p>
-					</div>
-					<div class="col col-6 flex">
-						<div class="row flex">
+					<div class="col-4" id="axis-vals">
+						<div class="row grid">
 							<div class="col">
-								<input type="text" class="form-control" id="smin" placeholder="Y_min"/>
+								<h6><strong>Axis Values</strong></h6>
 							</div>
 						</div>
 						<div class="row flex">
+							<div class="col-8">
+								<div class="row flex">
+									<div class="col reduced-padding">
+										<p>Spatial:</p>
+									</div>
+								</div>
+								<div class="row flex">
+									<div class="col-6 reduced-padding">
+										<input type="text" class="form-control" id="smin" placeholder="Y_min" onfocusout="changeGraphAxes()"/>
+									</div>
+									<div class="col-6 reduced-padding">
+										<input type="text" class="form-control"id="smax" placeholder="Y_max" onfocusout="changeGraphAxes()"/>
+									</div>
+								</div>
+							</div>
+							<div class="col-4">
+								<div class="row flex">
+									<div class="col reduced-padding">
+										<p>Temporal:</p>
+									</div>
+								</div>
+								<div class="row flex">
+									<div class="col reduced-padding">
+										<input type="text" class="form-control" id="tmax" placeholder="T_max" onfocusout="changeGraphAxes()"/>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-4">
+						<div class="row grid">
 							<div class="col">
-								<input type="text" class="form-control"id="smax" placeholder="Y_max"/>
+								<h6><strong>Threshold Values</strong></h6>
+							</div>
+						</div>
+						<div class="row flex">
+							<div class="col-4 flex">
+								<div class="row">
+									<div class="col reduced-padding">
+										<p>Spatial:</p>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col reduced-padding">
+										<input type="text" class="form-control" id="sThresh" placeholder="Yt" onfocusout="changeGraphAxes()"/>
+									</div>
+								</div>
+							</div>
+							<div class="col-4 flex">
+								<div class="row">
+									<div class="col reduced-padding">
+										<p>Temporal:</p>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col reduced-padding">
+										<input type="text" class="form-control" id="tThresh" placeholder="Tt" onfocusout="changeGraphAxes()"/>
+									</div>
+								</div>
+							</div>
+							<div class="col-4 flex">
+								<div class="row">
+									<div class="col  reduced-padding">
+										<p>Cluster:</p>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col reduced-padding">
+										<input type="text" class="form-control" id="cThresh" placeholder="Ct" onfocusout="changeGraphAxes()"/>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-1 gridButton">
+						<div class="row">
+							<div class="col">
+								<button type="button" class="btn btn-secondary" id="getSTL" onClick="getSTL()" title="Get STL">Get STL</button>
 							</div>
 						</div>
 					</div>
 				</div>
-				<div class="row flex">
-					<div class="col col-6 flex">
-						<p>Temporal:</p>
-					</div>
-					<div class="col col-6 flex">
-						<input type="text" class="form-control" id="tmax" placeholder="T_max"/>
-					</div>
-				</div>
-				<div class="row grid">
-					<div class="col">
-						<h5>Threshold Values</h5>
-					</div>
-				</div>
-				<div class="row flex">
-					<div class="col col-6 flex">
-						<p>Spatial:</p>
-					</div>
-					<div class="col col-6 flex">
-						<input type="text" class="form-control" id="sThresh" placeholder="Yt"/>
-					</div>
-				</div>
-				<div class="row flex">
-					<div class="col col-6 flex">
-						<p>Temporal:</p>
-					</div>
-					<div class="col col-6 flex">
-						<input type="text" class="form-control" id="tThresh" placeholder="Tt"/>
-					</div>
-				</div>
-				<div class="row flex">
-					<div class="col col-6 flex">
-						<p>Cluster:</p>
-					</div>
-					<div class="col col-6 flex">
-						<input type="text" class="form-control" id="cThresh" placeholder="Ct"/>
-					</div>
-				</div>
-				<div class="row flex" >
-					<div class="col">
-						<button type="button" class="btn btn-secondary" id="changeVals" onClick="changeGraphAxes()">ReDraw</button>
-					</div>
-				</div>
-			</div>
-			<div class="col col-9">
-				<div class="row flex">
-					<div class="col">
-						<div class="verticaltext float-left">
-							<p class="verticaltext content">Spatial Magnitude</p>
-						</div>
-						<canvas id="myCanvas" class="float-right"></canvas>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="row grid">
-			<div class="col">
-				<br/>
-				<button type="button" class="btn btn-secondary" id="getSTL" onClick="getSTL()" title="Get STL">Get STL</button>
 			</div>
 		</div>
 	</div>
+	<img src="./images/ylabel.png" id="ylabel" style="display: none;">
+	
+	<!-- <footer class="footer"> 
+    </footer> -->
 	 <!-- load bootstrap javascript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"
         integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>

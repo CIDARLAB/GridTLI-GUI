@@ -1,0 +1,59 @@
+
+ /* ALL PAGES 
+
+.row.flex {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.row.flex .col.flex {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.grid-border {
+    border: 1.5px solid #D6D6D6;
+    border-radius: 24px;
+    height: 600px;
+    padding: 15px;
+} */
+
+/********* GRIDTLI STYLE *********/
+
+.fa {
+    width: 12px;
+}
+
+#myCanvas {
+    width: 100%;
+    height: 100%;
+}
+
+.row.grid {
+    text-align: center;
+}
+
+.col.col-6.grid,
+.col.col-12.grid,
+.col.col-6.grid > input,
+.col.col-12.grid > input {
+    text-align: center;
+}
+
+.verticaltext {
+    position: relative;
+    min-width: 150px;
+    margin: 95px -35px;
+    font-size: 12px;
+}
+
+.verticaltext.content {
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+    position: absolute;
+}

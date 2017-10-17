@@ -36,67 +36,52 @@ function getPathIndex(path) {
     return pathIndex
 }
 
+function checkInputValues(ids, vars) {
+    emsg = [];
+    for (var i = 0; i < ids.length; i++) {
+        msg = "Error! ";
+        // defines error message according to ID
+        if (ids[i] == 'smin') {
+            msg += "Spatial Minimum must be a number less than Spatial Max. Using last defined value: " +
+                    spatialMin + ".\n"
+        } else if (ids[i] == 'smax') {
+            msg += "Spatial Maximum must be a number greater than Spatial Minimum. Using last defined values: [" + 
+                    spatialMin + ", " + spatialMax + "].\n";
+        } else if (ids[i] == 'sThresh') {
+            msg += "Spatial Threshold must be a number greater zero. Using last defined value: " + 
+                    spatialThresh + ".\n";
+        } else if (ids[i] == 'tmax') {
+            msg += "Temporal Maximum must be a number greater than zero. Using last defined value: " + 
+                    timeMax + ".\n";
+        } else if (ids[i] == 'tThresh') {
+            msg += "Temporal Maximum must be a number greater than zero. Using last defined value: " + 
+                    timeThresh + ".\n";
+        } else if (ids[i] == 'cThresh') {
+            msg += "Cluster Threshold must be a number greater zero. Using last defined value: " + 
+                    clusterThresh + ".\n";
+        }
+
+        if ($('#' + ids[i]).val() == "") {
+            // do nothing, will use last defined value
+        } else if (isNaN($('#' + ids[i]).val())) {
+            emsg += msg;
+        } else {
+            vars[i] = $('#' + ids[i]).val();
+        }
+    }
+    if (emsg != []) {
+        alert(emsg); // displays all errors and course of action at the end
+    }
+    return(vars)
+}
+
 function changeGraphAxes() {
     grid.removeChildren(); // delete previous grid
 
-    var spatialMin, spatialMax, spatialThresh;
-    var timeMax, timeThresh;
-
-    // get new grid values:
-    if ($('#smin').val() == "") {
-        spatialMin = -6;
-    } else if (isNaN($('#smin').val())) {
-        alert("Error! Spatial Mininum must be a number. Resetting to Spatial Defaults.");
-        spatialMin = -6;
-        spatialMax = 6;
-        spatialThresh = 1;
-    } else {
-        spatialMin = $('#smin').val();
-    };
-
-    if ($('#smax').val() == "") {
-        spatialMax = 6;
-    } else if (isNaN($('#smax').val()) || (spatialMax - spatialMin <= 0)) {
-        alert("Error! Spatial Maximum must be a number greater than Spatial Minimum. Resetting to Spatial Defaults.");
-        spatialMin = -6;
-        spatialMax = 6;
-        spatialThresh = 1;
-    } else {
-        spatialMax = $('#smax').val();
-    };
-
-    if ($('#sThresh').val() == "") {
-        spatialThresh = 1;
-    } else if (isNaN($('#sThresh').val()) || ($('#sThresh').val() <= 0)) {
-        alert("Error! Spatial Threshold must be a number greater than 0. Resetting to Spatial Defaults.");
-        spatialMin = -6;
-        spatialMax = 6;
-        spatialThresh = 1;
-    } else {
-        spatialThresh = $('#sThresh').val();
-    };
+    [spatialMin, spatialMax, spatialThresh, timeMax, timeThresh, clusterThresh] = checkInputValues(["smin","smax","sThresh","tmax","tThresh","cThresh"],
+        [spatialMin, spatialMax, spatialThresh, timeMax, timeThresh, clusterThresh]);
 
     nSpatialDivs = Math.ceil((spatialMax - spatialMin) / spatialThresh);
-
-    if ($('#tmax').val() == "") {
-        timeMax = 16;
-    } else if (isNaN($('#tmax').val()) || ($('#tmax').val() <= 0)) {
-        alert("Error! Maximum Time must be a number greater than 0. Resetting to Temporal Defaults.");
-        timeMax = 16;
-        timeThresh = 1;
-    } else {
-        timeMax = $('#tmax').val();
-    };
-    
-    if ($('#tThresh').val() == "") {
-        timeThresh = 1;
-    } else if (isNaN($('#tThresh').val()) || ($('#tThresh').val() <= 0)) {
-        alert("Error! Temporal Threshold must be a number greater than 0. Resetting to Temporal Defaults.");
-        timeMax = 16;
-        timeThresh = 1;
-    } else {
-        timeThresh = $('#tThresh').val();
-    };
     
     nTimeDivs = Math.ceil(timeMax / timeThresh);
 
@@ -184,22 +169,29 @@ function colorBoxes(nWide, nTall, cnvsSize, gridGroup, allPaths) {
     var rect_width = (cnvsSize.width - 60) / nWide;
     var rect_height = (cnvsSize.height - 60) / nTall;
 
+    var crossings = [];    
     // find the crossing points between the path and the grid lines:
     for (i = 0; i < gridGroup.children.length; i++) {
         gridGroup.children[i].fillColor = null; // for each box, fillColor is removed
-        var crossings = [];
         for (j = 0; j < allPaths.length; j++) {
-            crossings[j] = allPaths[j].getCrossings(gridGroup.children[i]);
-            if (crossings[j].length >= 1) {
-                gridGroup.children[i].fillColor = "#08CA75"; // for each crossing, fillColor is added
-                break; // once it's colored, moves onto next box without performing further checks
+            // check if the path is an outlier
+            if (checkOutliers(allPaths[j]) == true) {
+                allPaths[j].strokeColor = 'red'; // highlight color
+                crossings[j] = ["void"]; // won't check below for no-crossings possibility
+            } else {
+                // if path not outlier: 
+                crossings[j] = allPaths[j].getCrossings(gridGroup.children[i]);
+                if (crossings[j].length >= 1) {
+                    gridGroup.children[i].fillColor = "#08CA75"; // for each crossing, fillColor is added
+                    break; // once colored, move on next box without performing further checks
+                }
             }
         }
     }
 
     // for paths with no crossings:
     for (j = 0; j < allPaths.length; j++) {
-        if (crossings[j].length == 0) {
+        if (crossings[j].length == 0 && crossings[j] != '') { // if the path has no crossings AND wasn't skipped over (i.e. falls in same boxes as another line)
             for (i = 0; i < gridGroup.children.length; i++) {
                 if (gridGroup.children[i].fillColor == null) { // only checks uncolored boxes
                     current_point = gridGroup.children[i].point; // top left point of the current rectangle
@@ -243,33 +235,9 @@ function exportData() {
 
 function getSTL() {
     var jsonArray = convertPathsToJSON();
-    // check values for errors / fill in defaults
-    if ($('#sThresh').val() == "") {
-        spatialThresh = 1;
-    } else if (isNaN($('#sThresh').val()) || ($('#sThresh').val() <= 0)) {
-        alert("Error! Spatial Threshold must be a number greater than 0. Default = 1.");
-        spatialThresh = 1;
-    } else {
-        spatialThresh = $('#sThresh').val();
-    };
 
-    if ($('#tThresh').val() == "") {
-        timeThresh = 1;
-    } else if (isNaN($('#tThresh').val()) || ($('#tThresh').val() <= 0)) {
-        alert("Error! Temporal Threshold must be a number greater than 0. Default = 1.");
-        timeThresh = 1;
-    } else {
-        timeThresh = $('#tThresh').val();
-    };
-
-    if ($('#cThresh').val() == "") {
-        clusterThresh = 1;
-    } else if (isNaN($('#cThresh').val()) || ($('#cThresh').val() <= 0)) {
-        alert("Error! Cluster Threshold must be a number greater than 0. Default = 1.");
-        clusterThresh = 1;
-    } else {
-        clusterThresh = $('#cThresh').val();
-    };
+    [spatialThresh, timeThresh, clusterThresh] = checkInputValues(["sThresh","tThresh","cThresh"],
+            [spatialThresh, timeThresh, clusterThresh]);
 
      $.ajax({
         url: "getSTL",
@@ -327,25 +295,108 @@ function convertPathsToJSON() {
         }
         jsonArray.push(signal);  
     }
+    jsonStoredArray = jsonArray;
     return jsonArray;
 }
 
-function changeCoordinateValues(currentPath) {
-    var adjustedPair = {}; // initializes as empty array
-    adjustedPair["x"] = (currentPath.point.x - 50) * timeMax / (paper.view.bounds.width - 60);
-    adjustedPair["y"] = (((paper.view.bounds.height - 50) - currentPath.point.y) * (spatialMax - spatialMin) / (paper.view.bounds.height - 60)) + spatialMin;
-    console.log(currentPath.point.x, currentPath.point.y)
-    console.log(adjustedPair.x, adjustedPair.y)
+function changeCoordinateValues(currentSegment) {
+    var adjustedPair = {}; // initialize empty array
+    adjustedPair["x"] = (currentSegment.point.x - 50) * timeMax / (paper.view.bounds.width - 60);
+    adjustedPair["y"] = (((paper.view.bounds.height - 50) - currentSegment.point.y) * (spatialMax - spatialMin) / (paper.view.bounds.height - 60)) + spatialMin;
+    // console.log(currentSegment.point.x, currentSegment.point.y)
+    // console.log(adjustedPair.x, adjustedPair.y)
     return adjustedPair;
 }
 
-// LOGIN FUNCTIONS 
-function openLogin() {
-    $(".login-form").css({"height":"85px","padding":"20px 20px 5px 10px"});
-    // $(".pageOverlay").css({"backgroundColor":"rgba(0,0,0,0.6)","width":"100%"})
+function importData() {
+    // take the JSON file
+    var stlArray = convertPathsToJSON(); // for testing, gets the coords from the STL formula
+    // this is a first pass, but will only handle a "single behavior" STL; it will need to be 
+    // split into "segments" later on so that behaviors can be observed in each individual part of the formula. 
+    var spatialBound = [1,-5]; // this value should be provided by the tool for the upper/lower bounds
+    var tBound = []; // also provided for start/stop values;
+
+    // convert the file from STL coordinates to graph coordinates
+    convertJSONtoPaths(stlArray);
 }
 
-function closeLogin() {
-    $(".login-form").css({"height":"0px","padding":"0px 20px 0px 10px"});
-    // $(".pageOverlay").css({"backgroundColor":"rgba(0,0,0,0)","width":"0px"})
+function convertJSONtoPaths(stlArray) {
+    // takes in a JSON file containing the STL coordinates, converts the paths to canvas coordinates
+    // and places the paths on the canvas
+    for (var i = 0; i < stlArray.length; i++) { // length = number of paths
+        var path = new Path({
+            strokeColor: 'black',
+            selected: false,
+        })
+        for (var j = 0; j < stlArray[i].length; j++) {
+            path.add(changeSTLCoords(stlArray[i][j]));
+        }
+    }
+}
+
+function changeSTLCoords(stlCoord) {
+    var gridPair = {}; // initialize empty array
+    gridPair.x = (stlCoord["x"] * (paper.view.bounds.width - 60) / timeMax) + 50;
+    gridPair.y = (paper.view.bounds.height - 50) - ((stlCoord["y"] - spatialMin)*(paper.view.bounds.height - 60)) / (spatialMax - spatialMin);
+    // console.log(stlCoord.x, stlCoord.y)
+    // console.log(gridPair.x, gridPair.y)
+    return gridPair;
+}
+
+// possible format for the JSON version of the STL formula:
+var jsonSTL = 
+'[' + 
+    '{' + 
+        '"G": "[0.0, 6.0]",' +
+        '"x": "<= 2.0"' +
+    '},' +
+    '{' +
+        '"G": "[0.0, 1.0]",' +
+        '"x": ">= 0.0"' +
+    '},' +
+    '{' +
+        '"G": "[1.0, 5.0]",' +
+        '"x": ">= 1.0"' +
+    '},' +
+    '{' +
+        '"G": "[5.0, 6.0]",' +
+        '"x": ">= 0.0"' +
+    '}' +
+']';
+
+function checkOutliers(path) {
+    // checks a given path for outliers, colors red if yes
+    stlBounds = $.parseJSON(jsonSTL);
+    outOfBounds = false;
+    // for each segment on the path
+    for (var i = 0; i < path.segments.length; i++) {
+        if (outOfBounds == true) {
+            break;
+        }
+        var currentSeg = changeCoordinateValues(path.segments[i]) // convert canvas coords to STL values
+        // iterate through each of the bounds:
+        for (var j = 0; j < stlBounds.length; j++) {
+            if (outOfBounds == true) {
+                break;
+            }
+            // establish left and right bounds
+            var leftBound = stlBounds[j].G.substring(1,4);
+            var rightBound = stlBounds[j].G.substring(6,9);
+            // if the segment falls within the x-axis (temporal) bounds:
+            if (currentSeg.x >= leftBound && currentSeg.x <= rightBound) {
+                // compare if >= or <= the defined y-axis (spatial) bound
+                if (stlBounds[j].x.substring(0,2) == '>=') {
+                    if (currentSeg.y < stlBounds[j].x.substring(3,7)) {
+                        outOfBounds = true;
+                    }
+                } else {
+                    if (currentSeg.y > stlBounds[j].x.substring(3,7)) {
+                        outOfBounds = true;
+                    }
+                }
+            }
+        }
+    }
+
+    return outOfBounds;
 }
