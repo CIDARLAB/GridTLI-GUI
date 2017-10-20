@@ -1,27 +1,3 @@
-
- /* ALL PAGES 
-
-.row.flex {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-}
-
-.row.flex .col.flex {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.grid-border {
-    border: 1.5px solid #D6D6D6;
-    border-radius: 24px;
-    height: 600px;
-    padding: 15px;
-} */
-
-/********* GRIDTLI STYLE *********/
-
 .fa {
     width: 12px;
 }
@@ -31,8 +7,14 @@
     height: 100%;
 }
 
-.row.grid {
+.col-border {
+    border: 1px solid #d6d6d6;
+}
+
+div.reduced-padding {
+    padding: 0px;
     text-align: center;
+    /* border: 1px solid black; */
 }
 
 .col.col-6.grid,
@@ -42,18 +24,16 @@
     text-align: center;
 }
 
-.verticaltext {
-    position: relative;
-    min-width: 150px;
-    margin: 95px -35px;
-    font-size: 12px;
+.reduced-padding .btn.btn-secondary {
+    padding: 4px 4px;
+    width: 28px;
+    height: 28px;
 }
 
-.verticaltext.content {
-    -webkit-transform: rotate(-90deg);
-    -moz-transform: rotate(-90deg);
-    -ms-transform: rotate(-90deg);
-    -o-transform: rotate(-90deg);
-    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
-    position: absolute;
+.stl-buttons {
+    padding-top: 26px;
+}
+
+p, h6 {
+    margin-bottom: 0px;
 }

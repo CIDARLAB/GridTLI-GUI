@@ -1,6 +1,6 @@
 // temporary variables for project and username; should be stored/fetched from the server
-var projectName = 'SynBio Project';
-var username = 'O. Loompa';
+var projectName = 'Grid-Based Temporal Logic Inference';
+// var username = 'O. Loompa';
 
 // USER SETTINGS FUNCTIONS 
 function openUserSettings() {
