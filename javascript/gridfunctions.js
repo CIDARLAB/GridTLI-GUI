@@ -18,6 +18,7 @@ function linspace(a, b, n) {
 }
 
 function getPointsFromPath(path) {
+    // gets a list of all points from path
     pointList = [];
     for (i = 0; i < path.segments.length; i++) {
         pointList.push(path.segments[i].point)
@@ -26,6 +27,7 @@ function getPointsFromPath(path) {
 }
 
 function getPathIndex(path) {
+    // retrieves index for current path
     var currentChildren = project.activeLayer.children;
     for (i = 0; i < currentChildren.length; i++) {
         if (currentChildren[i] == project.getItems({ selected: true })[1]) {
@@ -37,16 +39,27 @@ function getPathIndex(path) {
 }
 
 function checkInputValues(ids, vars) {
-    emsg = [];
+    var emsg = [];
     for (var i = 0; i < ids.length; i++) {
-        msg = "Error! ";
+        var msg = "Error! ";
+        var test = ($('#' + ids[i]).val() <= 0);
         // defines error message according to ID
         if (ids[i] == 'smin') {
             msg += "Spatial Minimum must be a number less than Spatial Max. Using last defined value: " +
-                    spatialMin + ".\n"
+                    spatialMin + ".\n";
+            if ($('#' + ids[i+1]).val() == "") {
+                test = ($('#' + ids[i]).val() >= vars[i+1]);
+            } else {
+                test = ($('#' + ids[i]).val() >= $('#' + ids[i+1]).val());
+            }
         } else if (ids[i] == 'smax') {
-            msg += "Spatial Maximum must be a number greater than Spatial Minimum. Using last defined values: [" + 
-                    spatialMin + ", " + spatialMax + "].\n";
+            msg += "Spatial Maximum must be a number greater than Spatial Minimum. Using last defined value: " + 
+                    spatialMax + ".\n";
+            if ($('#' + ids[i-1]).val() == "") {
+                test = ($('#' + ids[i]).val() <= vars[i-1]);
+            } else {
+                test = ($('#' + ids[i]).val() <= $('#' + ids[i-1]).val());
+            }
         } else if (ids[i] == 'sThresh') {
             msg += "Spatial Threshold must be a number greater zero. Using last defined value: " + 
                     spatialThresh + ".\n";
@@ -61,15 +74,17 @@ function checkInputValues(ids, vars) {
                     clusterThresh + ".\n";
         }
 
-        if ($('#' + ids[i]).val() == "") {
-            // do nothing, will use last defined value
-        } else if (isNaN($('#' + ids[i]).val())) {
+        if (isNaN($('#' + ids[i]).val())) {
             emsg += msg;
-        } else {
-            vars[i] = $('#' + ids[i]).val();
+            $('#' + ids[i]).val(vars[i]);            
+        } else if ((test == true) && ($('#' + ids[i]).val() != "")) {
+            emsg += msg;      
+            $('#' + ids[i]).val(vars[i]); // assigns previous value to field
+        } else if (test == false) {
+            vars[i] = $('#' + ids[i]).val(); // assigns new value to field
         }
     }
-    if (emsg != []) {
+    if (emsg != '') {
         alert(emsg); // displays all errors and course of action at the end
     }
     return(vars)
@@ -175,17 +190,17 @@ function colorBoxes(nWide, nTall, cnvsSize, gridGroup, allPaths) {
         gridGroup.children[i].fillColor = null; // for each box, fillColor is removed
         for (j = 0; j < allPaths.length; j++) {
             // check if the path is an outlier
-            if (checkOutliers(allPaths[j]) == true) {
-                allPaths[j].strokeColor = 'red'; // highlight color
-                crossings[j] = ["void"]; // won't check below for no-crossings possibility
-            } else {
+            // if (checkOutliers(allPaths[j]) == true) {
+            //     allPaths[j].strokeColor = 'red'; // highlight color
+            //     crossings[j] = ["void"]; // won't check below for no-crossings possibility
+            // } else {
                 // if path not outlier: 
-                crossings[j] = allPaths[j].getCrossings(gridGroup.children[i]);
-                if (crossings[j].length >= 1) {
-                    gridGroup.children[i].fillColor = "#08CA75"; // for each crossing, fillColor is added
-                    break; // once colored, move on next box without performing further checks
-                }
+            crossings[j] = allPaths[j].getCrossings(gridGroup.children[i]);
+            if (crossings[j].length >= 1) {
+                gridGroup.children[i].fillColor = "#0275d8"; // for each crossing, fillColor is added
+                break; // once colored, move on next box without performing further checks
             }
+            // }
         }
     }
 
@@ -200,7 +215,7 @@ function colorBoxes(nWide, nTall, cnvsSize, gridGroup, allPaths) {
                             (allPaths[j].segments[k].point.x <= current_point[0] + rect_width) &&
                             (current_point[1] <= allPaths[j].segments[k].point.y) &&
                             (allPaths[j].segments[k].point.y <= current_point[1] + rect_height)) {
-                            gridGroup.children[i].fillColor = "#08CA75";
+                            gridGroup.children[i].fillColor = "#0275d8";
                             break;
                         }
                     }
@@ -295,7 +310,7 @@ function convertPathsToJSON() {
         }
         jsonArray.push(signal);  
     }
-    jsonStoredArray = jsonArray;
+    // jsonStoredArray = jsonArray;
     return jsonArray;
 }
 
@@ -344,59 +359,59 @@ function changeSTLCoords(stlCoord) {
 }
 
 // possible format for the JSON version of the STL formula:
-var jsonSTL = 
-'[' + 
-    '{' + 
-        '"G": "[0.0, 6.0]",' +
-        '"x": "<= 2.0"' +
-    '},' +
-    '{' +
-        '"G": "[0.0, 1.0]",' +
-        '"x": ">= 0.0"' +
-    '},' +
-    '{' +
-        '"G": "[1.0, 5.0]",' +
-        '"x": ">= 1.0"' +
-    '},' +
-    '{' +
-        '"G": "[5.0, 6.0]",' +
-        '"x": ">= 0.0"' +
-    '}' +
-']';
+// var jsonSTL = 
+// '[' + 
+//     '{' + 
+//         '"G": "[0.0, 6.0]",' +
+//         '"x": "<= 2.0"' +
+//     '},' +
+//     '{' +
+//         '"G": "[0.0, 1.0]",' +
+//         '"x": ">= 0.0"' +
+//     '},' +
+//     '{' +
+//         '"G": "[1.0, 5.0]",' +
+//         '"x": ">= 1.0"' +
+//     '},' +
+//     '{' +
+//         '"G": "[5.0, 6.0]",' +
+//         '"x": ">= 0.0"' +
+//     '}' +
+// ']';
 
-function checkOutliers(path) {
-    // checks a given path for outliers, colors red if yes
-    stlBounds = $.parseJSON(jsonSTL);
-    outOfBounds = false;
-    // for each segment on the path
-    for (var i = 0; i < path.segments.length; i++) {
-        if (outOfBounds == true) {
-            break;
-        }
-        var currentSeg = changeCoordinateValues(path.segments[i]) // convert canvas coords to STL values
-        // iterate through each of the bounds:
-        for (var j = 0; j < stlBounds.length; j++) {
-            if (outOfBounds == true) {
-                break;
-            }
-            // establish left and right bounds
-            var leftBound = stlBounds[j].G.substring(1,4);
-            var rightBound = stlBounds[j].G.substring(6,9);
-            // if the segment falls within the x-axis (temporal) bounds:
-            if (currentSeg.x >= leftBound && currentSeg.x <= rightBound) {
-                // compare if >= or <= the defined y-axis (spatial) bound
-                if (stlBounds[j].x.substring(0,2) == '>=') {
-                    if (currentSeg.y < stlBounds[j].x.substring(3,7)) {
-                        outOfBounds = true;
-                    }
-                } else {
-                    if (currentSeg.y > stlBounds[j].x.substring(3,7)) {
-                        outOfBounds = true;
-                    }
-                }
-            }
-        }
-    }
+// function checkOutliers(path) {
+//     // checks a given path for outliers, colors red if yes
+//     stlBounds = $.parseJSON(jsonSTL);
+//     outOfBounds = false;
+//     // for each segment on the path
+//     for (var i = 0; i < path.segments.length; i++) {
+//         if (outOfBounds == true) {
+//             break;
+//         }
+//         var currentSeg = changeCoordinateValues(path.segments[i]) // convert canvas coords to STL values
+//         // iterate through each of the bounds:
+//         for (var j = 0; j < stlBounds.length; j++) {
+//             if (outOfBounds == true) {
+//                 break;
+//             }
+//             // establish left and right bounds
+//             var leftBound = stlBounds[j].G.substring(1,4);
+//             var rightBound = stlBounds[j].G.substring(6,9);
+//             // if the segment falls within the x-axis (temporal) bounds:
+//             if (currentSeg.x >= leftBound && currentSeg.x <= rightBound) {
+//                 // compare if >= or <= the defined y-axis (spatial) bound
+//                 if (stlBounds[j].x.substring(0,2) == '>=') {
+//                     if (currentSeg.y < stlBounds[j].x.substring(3,7)) {
+//                         outOfBounds = true;
+//                     }
+//                 } else {
+//                     if (currentSeg.y > stlBounds[j].x.substring(3,7)) {
+//                         outOfBounds = true;
+//                     }
+//                 }
+//             }
+//         }
+//     }
 
-    return outOfBounds;
-}
+//     return outOfBounds;
+// }

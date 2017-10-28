@@ -2,17 +2,6 @@
 var projectName = 'Grid-Based Temporal Logic Inference';
 // var username = 'O. Loompa';
 
-// USER SETTINGS FUNCTIONS 
-function openUserSettings() {
-    $(".user-settings").css({"height":"85px","padding":"20px 20px 5px 10px"});
-    // $(".pageOverlay").css({"backgroundColor":"rgba(0,0,0,0.6)","width":"100%"})
-}
-
-function closeUserSettings() {
-    $(".user-settings").css({"height":"0px","padding":"0px 20px 0px 10px"});
-    // $(".pageOverlay").css({"backgroundColor":"rgba(0,0,0,0)","width":"0px"})
-}
-
 // NAVBAR
 $(function(){
     $('.navbar').html(
@@ -34,29 +23,6 @@ $(function(){
         '</div>'
     );
 });
-
-// fixes the links based on the id
-$(function(){
-    if ($('#spc-navbar').length == 1) {
-        $('.spc').addClass('active');
-        $('.dsg a').addClass('disabled');
-        $('.bld a').addClass('disabled');
-        $('.tst a').addClass('disabled');
-    }
-    if ($('#dsg-navbar').length == 1) {
-        $('.dsg').addClass('active');
-        $('.bld a').addClass('disabled');
-        $('.tst a').addClass('disabled');
-    }
-    if ($('#bld-navbar').length == 1) {
-        $('.bld').addClass('active');
-        $('.tst a').addClass('disabled');
-    }
-    if ($('#tst-navbar').length == 1) {
-        $('.tst').addClass('active');
-    }
-});
-    
 
 // FOOTER
 $(function(){
@@ -90,71 +56,109 @@ $(function(){
     );
 });
 
+$(function(){
+    $('.remove-signal-glyph').hide();
+})
 
-// VisBOL functions used on DESIGN and TEST Pages
+function addSig(){
+    var sigName = window.prompt("New Signal Name: ","e.g. in1 or out1");
+    if (sigName != null) {
+        // add sigName to the option list; (sort alphabetically)
+        $("#select-signal").append($("<li></li>").attr("id","opt-" + sigName))
+        $("#opt-" + sigName).append($('<button class="remove-signal-glyph"' +
+                'onClick="rmSig(\'' + sigName + '\')" title="Delete">' +
+                    '<span class="fa fa-minus-circle"></span>' +
+                '</button>' +
+                '<span> ' + sigName + '</span>'));
+        // create new tab, using sigName
+        $('#tab-col').append($('<button></button>').val(sigName).html(sigName).addClass("tab-btn").attr("id", "tab-" + sigName + "-btn"))
 
-function getSBOL(sbolURI) {
-    var sbol;
-    
-    var settings = {
-        url: sbolURI,
-        type: "get",
-        dataType: "xml",
-        async: false,
-    };
-
-    $.ajax(settings).done(function (response) {
-        sbol = (new XMLSerializer()).serializeToString(response);
-    });
-    return sbol;
+        // .onClick("changeGridTab(event, 'tab-" + sigName + "-btn')")
+        changeTab($("#tab-" + sigName + "-btn").click(), "tab-" + sigName + "-btn");
+        showRM();
+    }
 }
 
-function getVisBOL(sbol) {
-    var visdata;
-    var visURI = "http://api.synform.io/render/svg/";
-
-    var postSettings = {
-        url: "http://api.synform.io/render/svg/",
-        type: "post",
-        data: sbol,
-        async: false,
-        success: function(data) {
-            console.log(data)
-            visdata = data;
-        },
-        error: function(){
-            alert("Cannot get data");
-        }
-    };
-
-    $.ajax(postSettings).done(function () {
-    });
-
-    $('#design').html(
-        '<svg id="visSVG" style="visibility: hidden;">' + visdata
-    );
-    return visdata;
+function showRM() {
+    if ($('.remove-signal-glyph').is(":visible")) {
+        $('.remove-signal-glyph').hide();
+    } else {
+        $('.remove-signal-glyph').show();        
+    }
 }
 
-function loadVisBOL(sbolURI) {
-    svgLayer.activate(); // activate correct Layer
+function rmSig(sigName) {
+    $('#opt-' + sigName).remove(); // remove from select list
+    $('#tab-' + sigName + '-btn').remove(); // remove from tabs
+}
 
-    sbol = getSBOL(sbolURI);    
-    visdata = getVisBOL(sbol);
 
-    if (svgLayer._children.length > 0) {
-        // var numChildren = project._children[0]._children.length;
-        svgLayer.removeChildren(); // removes previous image/highlights
+function changeTab(evt, tabName) {
+    if (evt.target) {
+        evt = evt.target; // allows this to work even when simulating clicks with jquery .click()
+    }
+    if ($(evt).hasClass("active")) {
+        return; // do nothing if clicked on active class
     }
 
-    new Item(paper.project.importSVG(visdata));
+    storeSignalLocalStorage($('button[class*="active"]')[0].id)
+    // signalDictionary[$('button[class*="active"]')[0].id] = cnvs.children; // save lines
+    cnvs.removeChildren(); // remove lines
+    colorBoxes(nTimeDivs, nSpatialDivs, view.bounds, gridGroup, cnvs.children); // recolor grid
 
-    svgLayer._children[0].position.x = view.center.x;
-    // removes the extra character before the name
-    svgLayer._children[0]._children[1].content = svgLayer._children[0]._children[1].content.substring(2,svgLayer._children[0]._children[1].content.length-1)
+    $('.tab-btn').removeClass("active"); // remove all active classes
+    $(evt).addClass("active"); // add active class to clicked tab
 
-    svgLayer._children[0].lastChild._children[0].remove(); // removes the border around the image
-    svgLayer._children[0].lastChild._children[0]._segments[1]._point._x += -50 // removes extra "tail" for horizontal line
-    // project._children[0]._children[0]._children[lastchild-1].remove();
+    if (window.localStorage[evt.id] != null) {
+        // newData = window.localStorage[evt.id];
+        // jsonData = JSON.parse(window.localStorage[evt.id])
+        allPathsList = retrieveSignalLocalStorage(evt.id)
+        // spatialMax = jsonData["ymax"];
+        // spatialMin = jsonData["ymin"];
+        // timeMax = jsonData["tmax"];
+        // spatialThresh = jsonData["yt"];
+        // timeThresh = jsonData["tt"];
+        // clusterThresh = jsonData["ct"];
+        // allPathsList = jsonData["signals"];
+        convertJSONtoPaths(allPathsList);
+        changeGraphAxes(); // redraws the graph according to new data        
+    } else {
+        allPathsList = [];
+    }
+}
 
+function storeSignalLocalStorage(tabName) {
+    // creates a json file of the relevant data
+    var jsonData = {};
+    jsonData["ymax"] = spatialMax;
+    jsonData["ymin"] = spatialMin;
+    jsonData["tmax"] = timeMax;
+    jsonData["yt"] = spatialThresh;
+    jsonData["tt"] = timeThresh;
+    jsonData["ct"] = clusterThresh;
+    jsonData["signals"] = convertPathsToJSON(); 
+
+    var jsonString = JSON.stringify(jsonData);
+    window.localStorage.setItem(tabName, jsonString)
+}
+
+function retrieveSignalLocalStorage(tabName) {
+    var jsonData = JSON.parse(window.localStorage[tabName]);
+    spatialMax = jsonData["ymax"];
+    spatialMin = jsonData["ymin"];
+    timeMax = jsonData["tmax"];
+    spatialThresh = jsonData["yt"];
+    timeThresh = jsonData["tt"];
+    clusterThresh = jsonData["ct"];
+
+    $("#smax").val(jsonData["ymax"]);
+    $("#smin").val(jsonData["ymin"]);
+    $("#tmax").val(jsonData["tmax"]);
+    $("#sThresh").val(jsonData["yt"]);
+    $("#tThresh").val(jsonData["tt"]);
+    $("#cThresh").val(jsonData["ct"]);
+
+    allPathsList = jsonData["signals"]; 
+
+    return allPathsList;
 }
