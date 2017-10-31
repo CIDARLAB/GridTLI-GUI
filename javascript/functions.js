@@ -71,7 +71,8 @@ function addSig(){
                 '</button>' +
                 '<span> ' + sigName + '</span>'));
         // create new tab, using sigName
-        $('#tab-col').append($('<button></button>').val(sigName).html(sigName).addClass("tab-btn").attr("id", "tab-" + sigName + "-btn"))
+        $('#tab-col').append($('<button></button>').addClass("tab-btn").val(sigName).html(sigName).attr("id", "tab-" +
+                            sigName + "-btn").attr("onClick","changeTab(event, 'tab-" + sigName + "-btn')"));
 
         // .onClick("changeGridTab(event, 'tab-" + sigName + "-btn')")
         changeTab($("#tab-" + sigName + "-btn").click(), "tab-" + sigName + "-btn");
@@ -88,8 +89,12 @@ function showRM() {
 }
 
 function rmSig(sigName) {
+    if ($("#tab-" + sigName + "-btn").hasClass("active")) {
+        changeTab($("#tab-in0-btn").click(), "tab-in0-btn"); // resets to first tab
+    }
     $('#opt-' + sigName).remove(); // remove from select list
     $('#tab-' + sigName + '-btn').remove(); // remove from tabs
+    window.sessionStorage.removeItem(sigName); // remove from session Storage
 }
 
 
@@ -109,18 +114,9 @@ function changeTab(evt, tabName) {
     $('.tab-btn').removeClass("active"); // remove all active classes
     $(evt).addClass("active"); // add active class to clicked tab
 
-    if (window.localStorage[evt.id] != null) {
-        // newData = window.localStorage[evt.id];
-        // jsonData = JSON.parse(window.localStorage[evt.id])
+    if (window.sessionStorage[evt.id] != null) {
         allPathsList = retrieveSignalLocalStorage(evt.id)
-        // spatialMax = jsonData["ymax"];
-        // spatialMin = jsonData["ymin"];
-        // timeMax = jsonData["tmax"];
-        // spatialThresh = jsonData["yt"];
-        // timeThresh = jsonData["tt"];
-        // clusterThresh = jsonData["ct"];
-        // allPathsList = jsonData["signals"];
-        convertJSONtoPaths(allPathsList);
+        ssConvertJSONtoPaths(allPathsList);
         changeGraphAxes(); // redraws the graph according to new data        
     } else {
         allPathsList = [];
@@ -136,14 +132,14 @@ function storeSignalLocalStorage(tabName) {
     jsonData["yt"] = spatialThresh;
     jsonData["tt"] = timeThresh;
     jsonData["ct"] = clusterThresh;
-    jsonData["signals"] = convertPathsToJSON(); 
+    jsonData["signals"] = ssConvertPathsToJSON(); 
 
     var jsonString = JSON.stringify(jsonData);
-    window.localStorage.setItem(tabName, jsonString)
+    window.sessionStorage.setItem(tabName, jsonString)
 }
 
 function retrieveSignalLocalStorage(tabName) {
-    var jsonData = JSON.parse(window.localStorage[tabName]);
+    var jsonData = JSON.parse(window.sessionStorage[tabName]);
     spatialMax = jsonData["ymax"];
     spatialMin = jsonData["ymin"];
     timeMax = jsonData["tmax"];
@@ -161,4 +157,20 @@ function retrieveSignalLocalStorage(tabName) {
     allPathsList = jsonData["signals"]; 
 
     return allPathsList;
+}
+
+function collapseSigs() {
+    // graphs all lines on the same plot
+    var collapseMax, collapseMin, collapseTime = 0;
+    // iterate through each tab
+    for (var i = 0; i < window.sessionStorage.length; i++) {
+        var tmp = JSON.parse(window.sessionStorage[i]);
+        collapseMax = Math.max(collapseMax, tmp["ymax"]);     // find max spatial value
+        collapseMin = Math.min(collapseMin, tmp["ymin"]);     // find min spatial value
+        collapseTime = Math.max(collapseTime, tmp["tmax"]);    // find max time value
+        // convert each line to STL using its spatial/time values and back to coordinates on the new grid
+        
+    }
+
+    // plot lines, use a different color for each line
 }

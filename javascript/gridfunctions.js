@@ -358,6 +358,41 @@ function changeSTLCoords(stlCoord) {
     return gridPair;
 }
 
+
+
+function ssConvertPathsToJSON() {
+    // conversion specific to session storage
+    // converts paths on canvas to json file in x-y pairs
+    var jsonArray = [];
+    for (i = 0; i < cnvs.children.length; i++) {
+        var signal = [];
+        for (j = 0; j < cnvs.children[i].segments.length; j++) {
+            var adjustedPair = cnvs.children[i].segments[j];
+            var map = {};
+            map["x"] = adjustedPair.point["x"];
+            map["y"] = adjustedPair.point["y"];
+            signal.push(map);
+        }
+        jsonArray.push(signal);  
+    }
+    // jsonStoredArray = jsonArray;
+    return jsonArray;
+}
+
+function ssConvertJSONtoPaths(pathArray) {
+    // conversion specific to session storage
+    // takes in a JSON file containing the path coordinates and places the paths on the canvas
+    for (var i = 0; i < pathArray.length; i++) { // length = number of paths
+        var path = new Path({
+            strokeColor: 'black',
+            selected: false,
+        })
+        for (var j = 0; j < pathArray[i].length; j++) {
+            path.add(pathArray[i][j]);
+        }
+    }
+}
+
 // possible format for the JSON version of the STL formula:
 // var jsonSTL = 
 // '[' + 
