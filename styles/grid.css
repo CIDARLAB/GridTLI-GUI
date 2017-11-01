@@ -87,7 +87,7 @@ p, h6 {
     border-radius: 8px 8px 0px 0px;
     padding: 4px;
     overflow-y: scroll;
-    height: 216px;
+    height: 188px;
     text-align: left;
 }
 
@@ -96,6 +96,11 @@ p, h6 {
     margin: 0px;
     padding: 4px;
     margin-top: -2px;
+}
+
+#collapse-sigs {
+    width: calc(100% - 10px);
+    margin-left: 1px;
 }
 
 #add-sig {

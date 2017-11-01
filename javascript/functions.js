@@ -97,7 +97,6 @@ function rmSig(sigName) {
     window.sessionStorage.removeItem(sigName); // remove from session Storage
 }
 
-
 function changeTab(evt, tabName) {
     if (evt.target) {
         evt = evt.target; // allows this to work even when simulating clicks with jquery .click()
@@ -161,16 +160,54 @@ function retrieveSignalLocalStorage(tabName) {
 
 function collapseSigs() {
     // graphs all lines on the same plot
-    var collapseMax, collapseMin, collapseTime = 0;
+    var collapseMax = 0;
+    var collapseMin = 0;
+    var collapseTime = 0;
+    var tmpSTL = []; // array storing each signal with STL values
     // iterate through each tab
     for (var i = 0; i < window.sessionStorage.length; i++) {
-        var tmp = JSON.parse(window.sessionStorage[i]);
+        var tabID = $(".tab-btn")[i]["id"];
+        var tmp = JSON.parse(window.sessionStorage[tabID]);
         collapseMax = Math.max(collapseMax, tmp["ymax"]);     // find max spatial value
         collapseMin = Math.min(collapseMin, tmp["ymin"]);     // find min spatial value
         collapseTime = Math.max(collapseTime, tmp["tmax"]);    // find max time value
-        // convert each line to STL using its spatial/time values and back to coordinates on the new grid
-        
+        var sigArray = [];
+        // convert all paths to STL coordinate values
+        for (var j = 0; j < tmp["signals"].length; j++) {
+            var sig = [];
+            for (var k = 0; k < tmp["signals"][j].length; k++) {
+                var pair = {};
+                pair["x"] = (tmp["signals"][j][k]["x"] - 50) * tmp["tmax"] / (paper.view.bounds.width - 60);
+                pair["y"] = eval((((paper.view.bounds.height - 50) - tmp["signals"][j][k]["y"]) * (tmp["ymax"] - tmp["ymin"]) / (paper.view.bounds.height - 60)) + tmp["ymin"]);
+                sig.push(pair)
+            }
+            sigArray.push(sig);
+        }
+        tmpSTL.push(sigArray);
     }
+    // with max/min vals, convert STL back to coords with new grid
+    for (var i = 0; i < window.sessionStorage.length; i++) {
+        var tabID = $(".tab-btn")[i]["id"];
+        var tmp = JSON.parse(window.sessionStorage[tabID]);
+        for (var j = 0; j < tmpSTL.length; j++) {
+            var path = new Path({
+                strokeColor: 'black',
+                selected: false,
+            })
+            for (var k = 0; k < tmpSTL[j][0].length; k++) {
+                var pair = {};
+                pair["x"] = (tmpSTL[j][0][k]["x"] * (paper.view.bounds.width - 60)) / collapseTime + 50;
+                pair["y"] = (paper.view.bounds.height - 50) - ((tmpSTL[j][0][k]["y"] - collapseMin)*(paper.view.bounds.height - 60)) / (collapseMax - collapseMin) ;
+                path.add(pair)
+            }
+        }
+    }
+    // remove all tabs, replace with "Collapse"
+    spatialMin = collapseMin;
+    spatialMax = collapseMax;
+    timeMax = collapseTime;
+    // calculate reasonable threshold values
+    changeGraphAxes();
 
     // plot lines, use a different color for each line
 }
