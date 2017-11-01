@@ -28,6 +28,15 @@ p, h6 {
     margin-bottom: 0px;
 }
 
+.main-title{
+    text-align : center;
+}
+
+.side-main-title{
+    margin-top: 5px;
+    margin-bottom: -10px;
+}
+
 /* TABS */
 
 
@@ -40,14 +49,20 @@ p, h6 {
     margin-bottom: -2px;
 }
 
+.sub-title {
+    text-align: left;
+    margin-left: 2px;
+}
+
 .tab-btn {
-    border-radius: 8px 8px 0px 0px;
-    background-color: #e7e7e7;
+    border-radius: 4px 4px 0px 0px;
+    background-color: #e4e4e4;
     border: 2px solid #c7c7c7; 
+    margin-right: 5px;
     outline: none; 
     cursor: pointer;
     padding: 0px 8px;
-    width: 60px;
+    width: 70px;
     height: 24px;
     position: relative;
     z-index: 5;

@@ -33,7 +33,7 @@
 				<div class="col-1">
 					<div class="row draw-row">
 						<div class="col reduced-padding">
-							<strong>Draw</strong>
+							<h6 class="side-main-title"><strong>Draw</strong></h6>
 							<br/>
 							<div class="btn-group-vertical reduced-padding">
 								<button type="button" class="btn btn-secondary" onClick="selectLine.activate()" title="Select">
@@ -56,7 +56,7 @@
 					</div>
 					<div class="row signal-row">
 						<div class="col reduced-padding">
-							<strong>Signals</strong>
+							<h6 class="side-main-title"><strong>Signals</strong></h6>
 							<br/>
 							<div class="form-group">
 								<ul class="form-control" id="select-signal">
@@ -73,8 +73,11 @@
 										<span>out0</span>										
 									</li> -->
 								</ul>
-								<button class="btn btn-secondary" id="add-sig" onClick="addSig()">+</button>
-								<button class="btn btn-secondary" id="rm-sig" onClick="showRM()">-</button>
+								<div class="btn-group-horizontal reduced-padding">
+									<button class="btn btn-secondary" id="add-sig" onClick="addSig()">+</button>
+									<button class="btn btn-secondary" id="rm-sig" onClick="showRM()">-</button>
+								</div>
+								
 							</div>
 						</div>
 					</div>
@@ -82,8 +85,8 @@
 				<div class="col-11">
 					<div class="row tab-row">
 						<div class="col" id="tab-col">
-							<button class="tab-btn active" id="tab-in0-btn" onclick="changeTab(event, 'tab-in0-btn')">In0</button>
-							<!-- <button class="tab-btn" id="tab-out0-btn" onclick="changeTab(event, 'tab-out0-btn')">Out0</button> -->
+							<button class="tab-btn active" id="tab-in0-btn" onclick="changeTab(event, 'tab-in0-btn')">in0</button>
+							<!-- <button class="tab-btn" id="tab-out0-btn" onclick="changeTab(event, 'tab-out0-btn')">out0</button> -->
 						</div>
 					</div>
 					<div class="row">
@@ -97,14 +100,14 @@
 				<div class="col-4 right-side-border" id="axis-vals">
 					<div class="row">
 						<div class="col">
-							<h6><strong>Axis Values</strong></h6>
+							<h6 class="main-title"><strong>Axis Values</strong></h6>
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-8">
+						<div class="col-8" >
 							<div class="row">
 								<div class="col reduced-padding">
-									<p>Spatial:</p>
+									<p class="sub-title">Spatial:</p>
 								</div>
 							</div>
 							<div class="row">
@@ -119,7 +122,7 @@
 						<div class="col-4">
 							<div class="row">
 								<div class="col reduced-padding">
-									<p>Temporal:</p>
+									<p class="sub-title">Temporal:</p>
 								</div>
 							</div>
 							<div class="row">
@@ -133,14 +136,14 @@
 				<div class="col-4 right-side-border">
 					<div class="row">
 						<div class="col">
-							<h6><strong>Threshold Values</strong></h6>
+							<h6 class="main-title"><strong>Threshold Values</strong></h6>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-4">
 							<div class="row">
 								<div class="col reduced-padding">
-									<p>Spatial:</p>
+									<p class="sub-title">Spatial:</p>
 								</div>
 							</div>
 							<div class="row">
@@ -152,7 +155,7 @@
 						<div class="col-4">
 							<div class="row">
 								<div class="col reduced-padding">
-									<p>Temporal:</p>
+									<p class="sub-title">Temporal:</p>
 								</div>
 							</div>
 							<div class="row">
@@ -164,7 +167,7 @@
 						<div class="col-4">
 							<div class="row">
 								<div class="col  reduced-padding">
-									<p>Cluster:</p>
+									<p class="sub-title">Cluster:</p>
 								</div>
 							</div>
 							<div class="row">
@@ -178,14 +181,14 @@
 				<div class="col-4">
 					<div class="row">
 						<div class="col">
-							<h6><strong>Results</strong></h6>
+							<h6 class="main-title"><strong>Results</strong></h6>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col stl-buttons">
 							<button type="button" class="btn btn-secondary" id="getSTL" onClick="getSTL()" title="Get STL">Get STL</button>
 							<button type="button" class="btn btn-secondary" id="getSTL" onClick="getSTL()" title="Get STL">Get All STL</button>
-							<!-- <button type="button" class="btn btn-secondary" id="getSTL" onClick="getSTL()" title="Get STL">Do Stuff</button> -->
+							<button type="button" class="btn btn-secondary" id="getSTL" onClick="getSTL()" title="Get STL">Download Signals</button>
 						</div>
 					</div>
 				</div>
