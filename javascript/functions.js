@@ -60,8 +60,10 @@ $(function(){
     $('.remove-signal-glyph').hide();
 })
 
-function addSig(){
-    var sigName = window.prompt("New Signal Name: ","e.g. in1 or out1");
+function addSig(sigName){
+    if (sigName == null) {
+        sigName = window.prompt("New Signal Name: ","e.g. in1 or out1");
+    }
     if (sigName != null) {
         // add sigName to the option list; (sort alphabetically)
         $("#select-signal").append($("<li></li>").attr("id","opt-" + sigName))
@@ -165,8 +167,11 @@ function collapseSigs() {
     var collapseTime = 0;
     var tmpSTL = []; // array storing each signal with STL values
     // iterate through each tab
-    for (var i = 0; i < window.sessionStorage.length; i++) {
+    for (var i = 0; i < $(".tab-btn").length; i++) {
         var tabID = $(".tab-btn")[i]["id"];
+        if (window.sessionStorage[tabID] == null) {
+            storeSignalLocalStorage(tabID)
+        }
         var tmp = JSON.parse(window.sessionStorage[tabID]);
         collapseMax = Math.max(collapseMax, tmp["ymax"]);     // find max spatial value
         collapseMin = Math.min(collapseMin, tmp["ymin"]);     // find min spatial value
@@ -185,13 +190,21 @@ function collapseSigs() {
         }
         tmpSTL.push(sigArray);
     }
+    // remove all tabs, replace with "Collapse"
+    $(".tab-btn").hide();
+    addSig("Collapse")
+    spatialMin = collapseMin;
+    spatialMax = collapseMax;
+    timeMax = collapseTime;
+    // calculate reasonable threshold values
+    changeGraphAxes();
     // with max/min vals, convert STL back to coords with new grid
     for (var i = 0; i < window.sessionStorage.length; i++) {
-        var tabID = $(".tab-btn")[i]["id"];
-        var tmp = JSON.parse(window.sessionStorage[tabID]);
+        // var tabID = $(".tab-btn")[i]["id"];
+        // var tmp = JSON.parse(window.sessionStorage[tabID]);
         for (var j = 0; j < tmpSTL.length; j++) {
             var path = new Path({
-                strokeColor: 'black',
+                strokeColor: colors[i],
                 selected: false,
             })
             for (var k = 0; k < tmpSTL[j][0].length; k++) {
@@ -202,12 +215,7 @@ function collapseSigs() {
             }
         }
     }
-    // remove all tabs, replace with "Collapse"
-    spatialMin = collapseMin;
-    spatialMax = collapseMax;
-    timeMax = collapseTime;
-    // calculate reasonable threshold values
-    changeGraphAxes();
 
-    // plot lines, use a different color for each line
 }
+
+var colors = ['black','red','blue','green'];
