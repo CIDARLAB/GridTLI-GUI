@@ -14,7 +14,7 @@
 div.reduced-padding {
     padding: 0px;
     text-align: center;
-    /* border: 1px solid black; */
+    /* border: 2px solid green; */
 }
 
 .col.col-6.grid,
@@ -41,7 +41,7 @@ p, h6 {
 }
 
 .tab-btn {
-    border-radius: 8px 8px 0px 0px;
+    border-radius: 4px 4px 0px 0px;
     background-color: #e7e7e7;
     border: 2px solid #c7c7c7; 
     outline: none; 
@@ -65,53 +65,75 @@ p, h6 {
 
 /* DRAWING BUTTONS */ 
 
-.draw-row {
+.canvas-col {
     border-right: 2px solid #d6d6d6;
-    border-bottom: 2px solid #d6d6d6;
+}
+
+.draw-col {
+    border-bottom: 2px solid #d6d6d6;    
+}
+
+.btn-group-vertical {
+    margin-top: 4px;
+    margin-bottom: 8px;
 }
 
 /* SIGNALS SELECT BOX */ 
 
-.signal-row {
-    border-right: 2px solid #d6d6d6;    
-}
+/* .sig-col {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    flex-wrap: wrap;
+  }
 
-/* .signal-row ul {
-    list-style-type: none;
-} */
+.sig-col > [class*='col-'] {
+    display: flex;
+    flex-direction: column;
+  } */
+
+.form-group {
+    margin-bottom: 0px;
+}
 
 #select-signal {
     width: calc(100% - 10px);
-    margin: auto 4px;
+    margin: 0px 4px;
     border-color: #d6d6d6;
-    border-radius: 8px 8px 0px 0px;
+    border-radius: 4px 4px 0px 0px;
     padding: 4px;
     overflow-y: scroll;
-    height: 188px;
+    height: 230px;
     text-align: left;
 }
 
-.signal-row .btn {
+.sig-col .btn {
     width: calc(50% - 4px);
     margin: 0px;
     padding: 4px;
     margin-top: -2px;
-}
-
-#collapse-sigs {
-    width: calc(100% - 10px);
-    margin-left: 1px;
+    border-radius: 0px;
 }
 
 #add-sig {
-    margin-right: -2px;
-    margin-left: -1px;
-    border-radius: 0px 0px 0px 8px;   
+    margin-right: -3px;
+    margin-left: 2px;
 }
 
 #rm-sig {
-    margin-left: -3px;
-    border-radius: 0px 0px 8px 0px;    
+    margin-left: -2px;
+}
+
+#collapse-sigs {
+    margin-right: -3px;
+    margin-left: -1px;
+    border-radius: 0px 0px 0px 4px;   
+}
+
+#separate-sigs {
+    margin-left: -2px;
+    border-radius: 0px 0px 4px 0px;        
 }
 
 .remove-signal-glyph {
@@ -144,6 +166,11 @@ p, h6 {
 
 .controls-row {
     border-top: 2px solid #d6d6d6;
+    text-align: center;
+}
+
+.controls-row p {
+    text-align: left;
 }
 
 .right-side-border {
@@ -152,4 +179,8 @@ p, h6 {
 
 .stl-buttons {
     padding-top: 26px;
+}
+
+.stl-buttons .btn {
+    font-size: 14px;
 }

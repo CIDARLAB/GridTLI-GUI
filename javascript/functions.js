@@ -60,7 +60,7 @@ $(function(){
     $('.remove-signal-glyph').hide();
 })
 
-function addSig(sigName){
+function addSig(sigName) {
     if (sigName == null) {
         sigName = window.prompt("New Signal Name: ","e.g. in1 or out1");
     }
@@ -71,15 +71,19 @@ function addSig(sigName){
                 'onClick="rmSig(\'' + sigName + '\')" title="Delete">' +
                     '<span class="fa fa-minus-circle"></span>' +
                 '</button>' +
-                '<span> ' + sigName + '</span>'));
-        // create new tab, using sigName
-        $('#tab-col').append($('<button></button>').addClass("tab-btn").val(sigName).html(sigName).attr("id", "tab-" +
-                            sigName + "-btn").attr("onClick","changeTab(event, 'tab-" + sigName + "-btn')"));
-
-        // .onClick("changeGridTab(event, 'tab-" + sigName + "-btn')")
-        changeTab($("#tab-" + sigName + "-btn").click(), "tab-" + sigName + "-btn");
+                '<span onClick="changeTab($(\'#tab-' + sigName + '-btn\').click(), \'tab-' + sigName + '-btn\')"> ' + sigName + '</span>'));
+        addTab(sigName);
         showRM();
     }
+}
+
+function addTab(sigName) {
+    // create new tab, using sigName
+    $('#tab-col').append($('<button></button>').addClass("tab-btn").val(sigName).html(sigName).attr("id", "tab-" +
+                         sigName + "-btn").attr("onClick","changeTab(event, 'tab-" + sigName + "-btn')"));
+
+    // .onClick("changeGridTab(event, 'tab-" + sigName + "-btn')")
+    changeTab($("#tab-" + sigName + "-btn").click(), "tab-" + sigName + "-btn");
 }
 
 function showRM() {
@@ -95,8 +99,12 @@ function rmSig(sigName) {
         changeTab($("#tab-in0-btn").click(), "tab-in0-btn"); // resets to first tab
     }
     $('#opt-' + sigName).remove(); // remove from select list
-    $('#tab-' + sigName + '-btn').remove(); // remove from tabs
+    rmTab(sigName);
     window.sessionStorage.removeItem(sigName); // remove from session Storage
+}
+
+function rmTab(sigName) {
+    $('#tab-' + sigName + '-btn').remove(); // remove from tabs
 }
 
 function changeTab(evt, tabName) {
@@ -159,6 +167,7 @@ function retrieveSignalLocalStorage(tabName) {
 
     return allPathsList;
 }
+var colors = ['black','red','blue','green'];
 
 function collapseSigs() {
     // graphs all lines on the same plot
@@ -174,7 +183,11 @@ function collapseSigs() {
         }
         var tmp = JSON.parse(window.sessionStorage[tabID]);
         collapseMax = Math.max(collapseMax, tmp["ymax"]);     // find max spatial value
-        collapseMin = Math.min(collapseMin, tmp["ymin"]);     // find min spatial value
+        if (i == 0) {
+            collapseMin = tmp["ymin"]; // sets collapseMin to first min value rather than 0 to avoid a min of zero
+        } else {
+            collapseMin = Math.min(collapseMin, tmp["ymin"]);     // find min spatial value            
+        }
         collapseTime = Math.max(collapseTime, tmp["tmax"]);    // find max time value
         var sigArray = [];
         // convert all paths to STL coordinate values
@@ -190,9 +203,9 @@ function collapseSigs() {
         }
         tmpSTL.push(sigArray);
     }
-    // remove all tabs, replace with "Collapse"
+    // remove all tabs, replace with "All"
     $(".tab-btn").hide();
-    addSig("Collapse")
+    addTab("All");
     spatialMin = collapseMin;
     spatialMax = collapseMax;
     timeMax = collapseTime;
@@ -215,7 +228,40 @@ function collapseSigs() {
             }
         }
     }
-
 }
 
-var colors = ['black','red','blue','green'];
+function separateSigs() {
+    // remove current signals
+    cnvs.removeChildren(); // remove lines
+    colorBoxes(nTimeDivs, nSpatialDivs, view.bounds, gridGroup, cnvs.children); // recolor grid
+
+    // restore all tabs, remove "All"
+    $(".tab-btn").show();
+    rmTab("All");
+    // iterate through each stored signal, restoring the tabs
+    for (var i = 0; i < $(".tab-btn").length; i++) {
+        var tabID = $(".tab-btn")[i]["id"];
+        // if (window.sessionStorage[tabID] == null) {
+        //     storeSignalLocalStorage(tabID)
+        // }
+        var tmp = JSON.parse(window.sessionStorage[tabID]);
+        // retrieve axis values
+        spatialMin = tmp["ymax"];
+        spatialMax = tmp["ymin"];
+        timeMax = tmp["tmax"];
+        var sig = tmp["signals"];
+        changeGraphAxes();
+        for (var j = 0; j < sig.length; j++) {
+            var path = new Path({
+                strokeColor: colors[i],
+                selected: false,
+            })
+            for (var k = 0; k < sig[j][0].length; k++) {
+                var pair = {};
+                pair["x"] = sig[j][0][k]["x"];
+                pair["y"] = sig[j][0][k]["y"];
+                path.add(pair)
+            }
+        }
+    }
+}

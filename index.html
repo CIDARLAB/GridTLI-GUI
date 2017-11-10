@@ -19,7 +19,7 @@
         integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ"
         crossorigin="anonymous">
     <!-- load font awesome (glyphicons) -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 	<!--load custom stylesheet -->
 	<link rel="stylesheet" href="./styles/style.css"></link>
 	<link rel="stylesheet" href="./styles/grid.css"></link>
@@ -30,9 +30,9 @@
 	<div class="wrap">
 		<div class="container col-border">
 			<div class="row">
-				<div class="col-1">
-					<div class="row draw-row">
-						<div class="col reduced-padding">
+				<div class="col-1 canvas-col">
+					<div class="row">
+						<div class="col-12 reduced-padding draw-col">
 							<strong>Draw</strong>
 							<br/>
 							<div class="btn-group-vertical reduced-padding">
@@ -53,18 +53,18 @@
 								</button>
 							</div>
 						</div>
-					</div>
-					<div class="row signal-row">
-						<div class="col reduced-padding">
+					<!-- </div>
+					<div class="row signal-row"> -->
+						<div class="col-12 reduced-padding sig-col">
 							<strong>Signals</strong>
 							<br/>
 							<div class="form-group">
 								<ul class="form-control" id="select-signal">
 									<li>
-										<button class="remove-signal-glyph" title="">
+										<button class="remove-signal-glyph" title="Remove">
 											<span class="fa fa-circle"></span>
 										</button>
-										<span>in0</span>
+										<span onClick="changeTab($('#tab-in0-btn').click(), 'tab-in0-btn')">in0</span>
 									</li>
 									<!-- <li>
 										<button class="remove-signal-glyph" onClick="rmSig('out0')"title="Delete">
@@ -73,10 +73,20 @@
 										<span>out0</span>										
 									</li> -->
 								</ul>
-								<button class="btn btn-secondary" id="collapse-sigs" onClick="collapseSigs()">Collapse</button>
+								<button class="btn btn-secondary" id="add-sig" onClick="addSig()" title="Add Signal">
+									<span class="fa fa-plus"></span>
+								</button>
+								<button class="btn btn-secondary" id="rm-sig" onClick="showRM()" title="Remove Signal">
+									<span class="fa fa-minus"></span>									
+								</button>
 								<br/>
-								<button class="btn btn-secondary" id="add-sig" onClick="addSig()">+</button>
-								<button class="btn btn-secondary" id="rm-sig" onClick="showRM()">-</button>
+								<button class="btn btn-secondary" id="collapse-sigs" onClick="collapseSigs()" title="Single View">
+									<span class="fa fa-window-maximize"></span>									
+								</button>
+								<button class="btn btn-secondary" id="separate-sigs" onClick="separateSigs()" title="Separate View">
+									<span class="fa fa-window-restore"></span>
+								</button>								
+								
 							</div>
 						</div>
 					</div>
@@ -84,7 +94,7 @@
 				<div class="col-11">
 					<div class="row tab-row">
 						<div class="col" id="tab-col">
-							<button class="tab-btn active" id="tab-in0-btn" onclick="changeTab(event, 'tab-in0-btn')">In0</button>
+							<button class="tab-btn active" id="tab-in0-btn" onClick="changeTab(event, 'tab-in0-btn')">In0</button>
 							<!-- <button class="tab-btn" id="tab-out0-btn" onclick="changeTab(event, 'tab-out0-btn')">Out0</button> -->
 						</div>
 					</div>
@@ -187,7 +197,7 @@
 						<div class="col stl-buttons">
 							<button type="button" class="btn btn-secondary" id="getSTL" onClick="getSTL()" title="Get STL">Get STL</button>
 							<button type="button" class="btn btn-secondary" id="getSTL" onClick="getSTL()" title="Get STL">Get All STL</button>
-							<!-- <button type="button" class="btn btn-secondary" id="getSTL" onClick="getSTL()" title="Get STL">Do Stuff</button> -->
+							<button type="button" class="btn btn-secondary" id="getSTL" onClick="getSTL()" title="Get STL">Download Signals</button>
 						</div>
 					</div>
 				</div>
