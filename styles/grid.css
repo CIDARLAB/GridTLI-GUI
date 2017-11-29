@@ -36,7 +36,7 @@ p, h6 {
 }
 
 #tab-col {
-    margin-left: 50px; /* line up with grid axis */
+    padding-left: 64px; /* line up with grid axis */
     margin-bottom: -2px;
 }
 
@@ -51,6 +51,7 @@ p, h6 {
     height: 24px;
     position: relative;
     z-index: 5;
+    margin-right: 4px;
 }
 
 .tab-btn:hover,
@@ -58,8 +59,9 @@ p, h6 {
 .tab-btn:active,
 .tab-btn.active {
     background-color: white;
-    border-bottom: white;    
+    border-bottom: 2px solid white;    
     outline: none;
+
 }
 
 

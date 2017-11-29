@@ -57,24 +57,26 @@ $(function(){
 });
 
 $(function(){
-    $('.remove-signal-glyph').hide();
+    addSig('In0');
+    $(".remove-signal-glyph span").removeClass("fa-minus-circle");
+    $(".remove-signal-glyph span").addClass("fa-circle");
+    $('.remove-signal-glyph').hide();    
 })
 
 function addSig(sigName) {
     if (sigName == null) {
         sigName = window.prompt("New Signal Name: ","e.g. in1 or out1");
     }
-    if (sigName != null) {
-        // add sigName to the option list; (sort alphabetically)
-        $("#select-signal").append($("<li></li>").attr("id","opt-" + sigName))
-        $("#opt-" + sigName).append($('<button class="remove-signal-glyph"' +
-                'onClick="rmSig(\'' + sigName + '\')" title="Delete">' +
-                    '<span class="fa fa-minus-circle"></span>' +
-                '</button>' +
-                '<span onClick="changeTab($(\'#tab-' + sigName + '-btn\').click(), \'tab-' + sigName + '-btn\')"> ' + sigName + '</span>'));
-        addTab(sigName);
-        showRM();
-    }
+
+    // add sigName to the option list; (sort alphabetically)
+    $("#select-signal").append($("<li></li>").attr("id","opt-" + sigName))
+    $("#opt-" + sigName).append($('<button class="remove-signal-glyph"' +
+            'onClick="rmSig(\'' + sigName + '\')" title="Delete">' +
+                '<span class="fa fa-minus-circle"></span>' +
+            '</button>' +
+            '<span onClick="changeTab($(\'#tab-' + sigName + '-btn\').click(), \'tab-' + sigName + '-btn\')"> ' + sigName + '</span>'));
+    addTab(sigName);
+    showRM();
 }
 
 function addTab(sigName) {
@@ -100,7 +102,7 @@ function rmSig(sigName) {
     }
     $('#opt-' + sigName).remove(); // remove from select list
     rmTab(sigName);
-    window.sessionStorage.removeItem(sigName); // remove from session Storage
+    window.sessionStorage.removeItem("tab-" + sigName + "-btn"); // remove from session Storage
 }
 
 function rmTab(sigName) {
@@ -114,8 +116,13 @@ function changeTab(evt, tabName) {
     if ($(evt).hasClass("active")) {
         return; // do nothing if clicked on active class
     }
+    if (!$(evt.id).is(":visible")) {
+        separateSigs();
+    }
 
-    storeSignalLocalStorage($('button[class*="active"]')[0].id)
+    if ($(".btn-tab").length > 1) {
+        storeSignalLocalStorage($('button[class*="active"]')[0].id)
+    }
     // signalDictionary[$('button[class*="active"]')[0].id] = cnvs.children; // save lines
     cnvs.removeChildren(); // remove lines
     colorBoxes(nTimeDivs, nSpatialDivs, view.bounds, gridGroup, cnvs.children); // recolor grid
@@ -167,9 +174,13 @@ function retrieveSignalLocalStorage(tabName) {
 
     return allPathsList;
 }
-var colors = ['black','red','blue','green'];
+var colors = ['black','red','blue','green','brown','deeppink','blueviolet','limegreen','fuchsia','lightseagreen'];
 
 function collapseSigs() {
+    // if signals already collapsed, do nothing:
+    if ($("#tab-All-btn").hasClass("active")) {
+        return
+    }
     // graphs all lines on the same plot
     var collapseMax = 0;
     var collapseMin = 0;
@@ -215,15 +226,15 @@ function collapseSigs() {
     for (var i = 0; i < window.sessionStorage.length; i++) {
         // var tabID = $(".tab-btn")[i]["id"];
         // var tmp = JSON.parse(window.sessionStorage[tabID]);
-        for (var j = 0; j < tmpSTL.length; j++) {
+        for (var j = 0; j < tmpSTL[i].length; j++) {
             var path = new Path({
                 strokeColor: colors[i],
                 selected: false,
             })
-            for (var k = 0; k < tmpSTL[j][0].length; k++) {
+            for (var k = 0; k < tmpSTL[i][j].length; k++) {
                 var pair = {};
-                pair["x"] = (tmpSTL[j][0][k]["x"] * (paper.view.bounds.width - 60)) / collapseTime + 50;
-                pair["y"] = (paper.view.bounds.height - 50) - ((tmpSTL[j][0][k]["y"] - collapseMin)*(paper.view.bounds.height - 60)) / (collapseMax - collapseMin) ;
+                pair["x"] = (tmpSTL[i][j][k]["x"] * (paper.view.bounds.width - 60)) / collapseTime + 50;
+                pair["y"] = (paper.view.bounds.height - 50) - ((tmpSTL[i][j][k]["y"] - collapseMin)*(paper.view.bounds.height - 60)) / (collapseMax - collapseMin) ;
                 path.add(pair)
             }
         }
@@ -231,37 +242,10 @@ function collapseSigs() {
 }
 
 function separateSigs() {
-    // remove current signals
-    cnvs.removeChildren(); // remove lines
-    colorBoxes(nTimeDivs, nSpatialDivs, view.bounds, gridGroup, cnvs.children); // recolor grid
-
-    // restore all tabs, remove "All"
+    // restore all tabs
     $(".tab-btn").show();
-    rmTab("All");
-    // iterate through each stored signal, restoring the tabs
-    for (var i = 0; i < $(".tab-btn").length; i++) {
-        var tabID = $(".tab-btn")[i]["id"];
-        // if (window.sessionStorage[tabID] == null) {
-        //     storeSignalLocalStorage(tabID)
-        // }
-        var tmp = JSON.parse(window.sessionStorage[tabID]);
-        // retrieve axis values
-        spatialMin = tmp["ymax"];
-        spatialMax = tmp["ymin"];
-        timeMax = tmp["tmax"];
-        var sig = tmp["signals"];
-        changeGraphAxes();
-        for (var j = 0; j < sig.length; j++) {
-            var path = new Path({
-                strokeColor: colors[i],
-                selected: false,
-            })
-            for (var k = 0; k < sig[j][0].length; k++) {
-                var pair = {};
-                pair["x"] = sig[j][0][k]["x"];
-                pair["y"] = sig[j][0][k]["y"];
-                path.add(pair)
-            }
-        }
-    }
+
+    // remove tab "All", which triggers reset to 1st tab 
+    rmSig("All");
+
 }

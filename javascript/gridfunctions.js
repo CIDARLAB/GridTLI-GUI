@@ -310,7 +310,6 @@ function convertPathsToJSON() {
         }
         jsonArray.push(signal);  
     }
-    // jsonStoredArray = jsonArray;
     return jsonArray;
 }
 
@@ -358,8 +357,6 @@ function changeSTLCoords(stlCoord) {
     return gridPair;
 }
 
-
-
 function ssConvertPathsToJSON() {
     // conversion specific to session storage
     // converts paths on canvas to json file in x-y pairs
@@ -375,7 +372,6 @@ function ssConvertPathsToJSON() {
         }
         jsonArray.push(signal);  
     }
-    // jsonStoredArray = jsonArray;
     return jsonArray;
 }
 
