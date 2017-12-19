@@ -64,13 +64,13 @@ $(function(){
 })
 
 // list of invalid inputs that will result in no new tab being added
-var invalidInputs = new Set([null, "", " ", "  ", "e.g. in1 or out1"]) 
+var invalidInputs = new Set([null, "", "e.g. in1 or out1"]) 
 // null is for cancel, "", " ", and "  " for typos, and removes the placeholder as a valid option
 
 function addSig(sigName) {
     if (sigName == null) { // lets the user input a name
         sigName = window.prompt("New Signal Name: ","e.g. in1 or out1");
-        if (invalidInputs.has(sigName)) { // if no input is given
+        if (invalidInputs.has(sigName.trim())) { // if no input is given
             return
         }
     }
