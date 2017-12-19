@@ -83,7 +83,7 @@ function checkInputValues(ids, vars) {
                     clusterThresh + ".\n";
         }
 
-        if (isNaN($('#' + ids[i]).val())) {
+        if (isNaN(eval($('#' + ids[i]).val()))) {
             emsg += msg;
             $('#' + ids[i]).val(vars[i]);            
         } else if ((test == true) && ($('#' + ids[i]).val() != "")) {
@@ -92,6 +92,8 @@ function checkInputValues(ids, vars) {
         } else if (test == false) {
             vars[i] = $('#' + ids[i]).val(); // assigns new value to field
         }
+
+        vars[i] = eval(vars[i]);
     }
     if (emsg != '') {
         alert(emsg); // displays all errors and course of action at the end
@@ -106,7 +108,6 @@ function changeGraphAxes() {
         [spatialMin, spatialMax, spatialThresh, timeMax, timeThresh, clusterThresh]);
 
     nSpatialDivs = Math.ceil((spatialMax - spatialMin) / spatialThresh);
-    
     if (nSpatialDivs > 40) {
         nSpatialDivs = 40;
         spatialThresh = (spatialMax - spatialMin) / nSpatialDivs;
@@ -124,20 +125,22 @@ function changeGraphAxes() {
 
     // calculate time-axis values
     timeValues = [];
-    for (var i = 0; i < parseFloat(timeMax); i += parseFloat(timeThresh)) {
-        timeValues.push(i);
+    for (var i = 0; i < timeMax; i += timeThresh) {
+        if (Math.round(i*10**2)/10**2 < timeMax) {
+            timeValues.push(Math.round(i*10**2)/10**2);
+        }
     }
-    timeValues.push(parseFloat(timeMax));
+    timeValues.push(timeMax);
 
     // calculate spatial-axis values
     spatialValues = [];
-    for (var i = parseFloat(spatialMin); i < parseFloat(spatialMax); i += parseFloat(spatialThresh)) {
-        spatialValues.push(i)
+    for (var i = spatialMin; i < spatialMax; i += spatialThresh) {
+        if (Math.round(i*10**2)/10**2 < spatialMax) {
+            spatialValues.push(Math.round(i*10**2)/10**2)
+        }
     }
-    spatialValues.push(parseFloat(spatialMax));
+    spatialValues.push(spatialMax);
 
-    // timeValues = linspace(0, Math.floor(timeMax/timeThresh) * timeThresh, nTimeDivs + 1);
-    // spatialValues = linspace(spatialMin, Math.floor(spatialMax/spatialThresh) * spatialThresh, nSpatialDivs + 1)
 
     spatialValues.reverse() // grid writes top to bottom, therefore reverse the y-axis values
 
@@ -157,8 +160,8 @@ function drawGrid(nWide, nTall, xAxisVals, yAxisVals, cnvsSize) {
         fillColor: 'black',
     });
 
-    var width_per_rect = (cnvsSize.width - 60) * timeThresh / (xAxisVals[xAxisVals.length - 1] - xAxisVals[0]);
-    var height_per_rect = (cnvsSize.height - 60) * spatialThresh / (yAxisVals[0] - yAxisVals[yAxisVals.length - 1]); 
+    var width_per_rect = (cnvsSize.width - 60) * eval(timeThresh) / (xAxisVals[xAxisVals.length - 1] - xAxisVals[0]);
+    var height_per_rect = (cnvsSize.height - 60) * eval(spatialThresh) / (yAxisVals[0] - yAxisVals[yAxisVals.length - 1]); 
 
     // draw x-axis (temporal) tick marks
     for (var i = 0; i < nWide; i++) {
@@ -168,7 +171,7 @@ function drawGrid(nWide, nTall, xAxisVals, yAxisVals, cnvsSize) {
         var xTick = new paper.Path.Line(topPoint, bottomPoint);
         xTick.strokeColor = '#c00';
         var xVals = new PointText(new Point(xPos - 5, cnvsSize.bottom - 30));
-        xVals.content = timeValues[i];
+        xVals.content = xAxisVals[i];
     }
     var specialWidth = cnvsSize.right - 10 - xTick.segments[0].point.x;
     
@@ -179,18 +182,7 @@ function drawGrid(nWide, nTall, xAxisVals, yAxisVals, cnvsSize) {
     var xTick = new paper.Path.Line(topPoint, bottomPoint);
     xTick.strokeColor = '#c00';
     var xVals = new PointText(new Point(xPos - 5, cnvsSize.bottom - 30));
-    xVals.content = timeValues[timeValues.length - 1];
-
-    // draw y-axis (spatial) tick marks
-
-    // draw first tick mark (draws top -> bottom therefore first)
-    // var yPos = 10; // 10 is y-axis offset due to top margin
-    // var leftPoint = new paper.Point(45, yPos);
-    // var rightPoint = new paper.Point(45 + 10, yPos);
-    // var yTick = new paper.Path.Line(leftPoint, rightPoint);
-    // yTick.strokeColor = '#00c';
-    // var yVal = new PointText(new Point(cnvsSize.left + 25, yPos + 5));
-    // yVal.content = spatialValues[0];
+    xVals.content = xAxisVals[xAxisVals.length - 1];
 
     // draw y-axis (spatial) tick marks
     var specialHeight = cnvsSize.height - 50 - height_per_rect * (nTall - 1); // -50 only corrects for bottom offset, not top offset
@@ -207,7 +199,7 @@ function drawGrid(nWide, nTall, xAxisVals, yAxisVals, cnvsSize) {
         var yTick = new paper.Path.Line(leftPoint, rightPoint);
         yTick.strokeColor = '#00c';
         var yVal = new PointText(new Point(cnvsSize.left + 25, yPos + 5));
-        yVal.content = spatialValues[j];
+        yVal.content = yAxisVals[j];
         // if (i == 1) {
         //     var specialHeight = yTick.segments[0].point.y - 10; // 10 is y-axis offset due to top margin            
         // }
