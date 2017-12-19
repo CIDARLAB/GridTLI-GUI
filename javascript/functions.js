@@ -63,11 +63,17 @@ $(function(){
     $('.remove-signal-glyph').hide();    
 })
 
-function addSig(sigName) {
-    if (sigName == null) {
-        sigName = window.prompt("New Signal Name: ","e.g. in1 or out1");
-    }
+// list of invalid inputs that will result in no new tab being added
+var invalidInputs = new Set([null, "", " ", "  ", "e.g. in1 or out1"]) 
+// null is for cancel, "", " ", and "  " for typos, and removes the placeholder as a valid option
 
+function addSig(sigName) {
+    if (sigName == null) { // lets the user input a name
+        sigName = window.prompt("New Signal Name: ","e.g. in1 or out1");
+        if (invalidInputs.has(sigName)) { // if no input is given
+            return
+        }
+    }
     // add sigName to the option list; (sort alphabetically)
     $("#select-signal").append($("<li></li>").attr("id","opt-" + sigName))
     $("#opt-" + sigName).append($('<button class="remove-signal-glyph"' +
@@ -120,12 +126,14 @@ function changeTab(evt, tabName) {
         separateSigs();
     }
 
-    if ($(".btn-tab").length > 1) {
+    if ($(".btn-tab").length > 1) { // if a tab already exists:
         storeSignalLocalStorage($('button[class*="active"]')[0].id)
+        cnvs.removeChildren(); // remove lines
+        colorBoxes(nTimeDivs, nSpatialDivs, view.bounds, gridGroup, cnvs.children); // recolor grid
     }
     // signalDictionary[$('button[class*="active"]')[0].id] = cnvs.children; // save lines
-    cnvs.removeChildren(); // remove lines
-    colorBoxes(nTimeDivs, nSpatialDivs, view.bounds, gridGroup, cnvs.children); // recolor grid
+    // cnvs.removeChildren(); // remove lines
+    // colorBoxes(nTimeDivs, nSpatialDivs, view.bounds, gridGroup, cnvs.children); // recolor grid
 
     $('.tab-btn').removeClass("active"); // remove all active classes
     $(evt).addClass("active"); // add active class to clicked tab

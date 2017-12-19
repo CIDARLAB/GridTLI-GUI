@@ -52,6 +52,20 @@ p, h6 {
     position: relative;
     z-index: 5;
     margin-right: 4px;
+    overflow-x: hidden;
+}
+
+/* forces padding on the right to handle title overflow*/
+.tab-btn::after {
+    content: ' ';
+    display: block;
+    background-color: inherit;
+    height: 24px;
+    width: 10px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    z-index: 10;
 }
 
 .tab-btn:hover,
