@@ -64,14 +64,19 @@ $(function(){
 })
 
 // list of invalid inputs that will result in no new tab being added
-var invalidInputs = new Set([null, "", "e.g. in1 or out1"]) 
-// null is for cancel, "", " ", and "  " for typos, and removes the placeholder as a valid option
+// var invalidInputs = new Set([null, "", "e.g. in1 or out1"]) 
+// null is for cancel, "", and removes the placeholder as a valid option
 
 function addSig(sigName) {
     if (sigName == null) { // lets the user input a name
         sigName = window.prompt("New Signal Name: ","e.g. in1 or out1");
-        if (invalidInputs.has(sigName.trim())) { // if no input is given
-            return
+        // if (invalidInputs.has(sigName.trim())) { // if no input is given
+        //     return
+        // }
+        // var letterNumber = /^[0-9a-zA-Z]+$/
+        if (sigName.match(/^[0-9a-zA-Z_]+/)) {  
+            console.log(sigName + " triggered RegEx");  
+            console.log(sigName.match(/^[0-9a-zA-Z_]+/));
         }
     }
     // add sigName to the option list; (sort alphabetically)
@@ -126,7 +131,7 @@ function changeTab(evt, tabName) {
         separateSigs();
     }
 
-    if ($(".btn-tab").length > 1) { // if a tab already exists:
+    if ($(".tab-btn").length > 1) { // if a tab already exists:
         storeSignalLocalStorage($('button[class*="active"]')[0].id)
         cnvs.removeChildren(); // remove lines
         colorBoxes(nTimeDivs, nSpatialDivs, view.bounds, gridGroup, cnvs.children); // recolor grid
